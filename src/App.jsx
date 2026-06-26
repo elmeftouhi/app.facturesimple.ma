@@ -1,34 +1,60 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+
+function AuthLayout({ children }) {
+  return (
+    <div className="min-h-screen bg-slate-100 px-4 py-10">
+      <div className="mx-auto w-full max-w-2xl">{children}</div>
+    </div>
+  );
+}
+
+function PublicRoute({ children }) {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
+}
+
+function AppRoutes() {
+  const { isAuthenticated } = useAuth();
+
+  return (
+    <Routes>
+      <Route path="/login" element={<PublicRoute><AuthLayout><Login /></AuthLayout></PublicRoute>} />
+      <Route path="/register" element={<PublicRoute><AuthLayout><Register /></AuthLayout></PublicRoute>} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <div className="min-h-screen bg-slate-50 text-slate-900">
+              <Header />
+              <main className="mx-auto max-w-6xl px-4 py-10">
+                <Dashboard />
+              </main>
+              <Footer />
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} />
+    </Routes>
+  );
+}
 
 function App() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <Header />
-      <main className="mx-auto max-w-6xl px-4 py-10">
-        <section className="mb-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <div className="flex items-center gap-3 text-slate-700">
-            <FontAwesomeIcon icon={faLayerGroup} className="h-6 w-6 text-slate-500" />
-            <div>
-              <h1 className="text-2xl font-semibold">Facture Simple</h1>
-              <p className="mt-2 text-slate-600">
-                Auth scaffold with login and registration forms.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Login />
-          <Register />
-        </div>
-      </main>
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
