@@ -30,7 +30,8 @@ function normalizeExpiry(data) {
 }
 
 export function saveAuth(data) {
-  const token = data.token || data.accessToken || data.idToken || data.jwt;
+    console.log("Saving auth data:", data); // Debugging line
+  const token = data?.token || data?.accessToken || data?.idToken || data?.jwt || data?.authToken;
   if (!token) {
     throw new Error("Missing auth token in response.");
   }
@@ -39,9 +40,9 @@ export function saveAuth(data) {
   const payload = {
     token,
     expiresAt,
-    user: data.user || null,
-    tenants: data.tenants || null,
-    selectedTenant: data.selectedTenant || null
+    user: data?.user || null,
+    tenants: data?.tenants || null,
+    selectedTenant: data?.selectedTenant || null
   };
 
   localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(payload));

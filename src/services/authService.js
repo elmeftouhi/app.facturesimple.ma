@@ -1,32 +1,32 @@
-import * as apiClient from "../api/apiClient";
-
-const LOGIN_ENDPOINT = "/auth/login";
-const REGISTER_ENDPOINT = "/auth/register";
-const LOGOUT_ENDPOINT = "/auth/logout";
-const ME_ENDPOINT = "/me";
-const TENANTS_ENDPOINT = "/me/tenants";
+import {
+  getMe as getMeAuth,
+  getTenants as getTenantsAuth,
+  login as loginAuth,
+  logout as logoutAuth,
+  register as registerAuth,
+  switchTenant as switchTenantAuth
+} from "../entities/auth/api/authApi";
 
 export async function login(payload) {
-  return apiClient.post(LOGIN_ENDPOINT, payload);
+  return loginAuth(payload);
 }
 
 export async function register(payload) {
-  return apiClient.post(REGISTER_ENDPOINT, payload);
+  return registerAuth(payload);
 }
 
 export async function logout() {
-  return apiClient.post(LOGOUT_ENDPOINT, {});
+  return logoutAuth();
 }
 
 export async function getMe() {
-  return apiClient.get(ME_ENDPOINT);
+  return getMeAuth();
 }
 
 export async function getTenants() {
-  return apiClient.get(TENANTS_ENDPOINT);
+  return getTenantsAuth();
 }
 
 export async function switchTenant(tenantId) {
-  // the backend expects { tenantId } in the body and returns a new token
-  return apiClient.post("/auth/switch-tenant", { tenantId });
+  return switchTenantAuth(tenantId);
 }

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import * as authServiceApi from "../services/authService";
+import * as authApi from "../entities/auth/api/authApi";
+import { buildAuthSession, normalizeTenantList } from "../entities/auth/model/authModel";
 import * as authStorage from "../auth/authStorage";
 
 const AuthContext = createContext(null);
@@ -20,52 +21,58 @@ export function AuthProvider({ children }) {
   const isAuthenticated = Boolean(auth?.token && !authStorage.isExpired(auth));
 
   const login = async (payload) => {
-    const data = await authServiceApi.login(payload);
-    const savedAuth = authStorage.saveAuth(data);
-    
+    const data = await authApi.login(payload);
+    const savedAuth = authStorage.saveAuth(buildAuthSession(data));
+
     try {
-      const userInfo = await authServiceApi.getMe();
-      savedAuth.user = userInfo;
-      
-      const tenantsResponse = await authServiceApi.getTenants();
-      const tenants = Array.isArray(tenantsResponse) ? tenantsResponse : tenantsResponse?.data || [];
-      savedAuth.tenants = tenants;
-      savedAuth.selectedTenant = tenants?.[0] || null;
-      
-      authStorage.saveAuth(savedAuth);
+      const [userInfo, tenantsResponse] = await Promise.all([authApi.getMe(), authApi.getTenants()]);
+      const tenants = normalizeTenantList(tenantsResponse);
+      const updated = {
+        ...savedAuth,
+        user: userInfo,
+        tenants,
+        selectedTenant: tenants?.[0] || null
+      };
+
+      authStorage.saveAuth(updated);
+      setAuth(updated);
+      return data;
     } catch (err) {
       console.error("Failed to fetch user info or tenants:", err);
     }
-    
+
     setAuth(savedAuth);
     return data;
   };
 
   const register = async (payload) => {
-    const data = await authServiceApi.register(payload);
-    const savedAuth = authStorage.saveAuth(data);
-    
+    const data = await authApi.register(payload);
+    const savedAuth = authStorage.saveAuth(buildAuthSession(data));
+
     try {
-      const userInfo = await authServiceApi.getMe();
-      savedAuth.user = userInfo;
-      
-      const tenantsResponse = await authServiceApi.getTenants();
-      const tenants = Array.isArray(tenantsResponse) ? tenantsResponse : tenantsResponse?.data || [];
-      savedAuth.tenants = tenants;
-      savedAuth.selectedTenant = tenants?.[0] || null;
-      
-      authStorage.saveAuth(savedAuth);
+      const [userInfo, tenantsResponse] = await Promise.all([authApi.getMe(), authApi.getTenants()]);
+      const tenants = normalizeTenantList(tenantsResponse);
+      const updated = {
+        ...savedAuth,
+        user: userInfo,
+        tenants,
+        selectedTenant: tenants?.[0] || null
+      };
+
+      authStorage.saveAuth(updated);
+      setAuth(updated);
+      return data;
     } catch (err) {
       console.error("Failed to fetch user info or tenants:", err);
     }
-    
+
     setAuth(savedAuth);
     return data;
   };
 
   const logout = async () => {
     try {
-      await authServiceApi.logout();
+      await authApi.logout();
     } catch (err) {
       console.error("Logout request failed:", err);
     } finally {
@@ -77,20 +84,17 @@ export function AuthProvider({ children }) {
   const selectTenant = async (tenant) => {
     if (!auth) return;
 
-    // optimistically set selected tenant while switching
     const optimistic = { ...auth, selectedTenant: tenant };
     setAuth(optimistic);
 
     try {
-      const data = await authServiceApi.switchTenant(tenant.id || tenant.tenantId || tenant.name);
-      // data expected to include a new token and optionally expiresAt
+      const data = await authApi.switchTenant(tenant.id || tenant.tenantId || tenant.name);
       const updated = {
         ...optimistic,
         token: data.token || data.accessToken || data.idToken || data.jwt || auth.token,
         expiresAt: data.expiresAt || data.expiresIn ? (data.expiresAt || (Date.now() + (data.expiresIn || 0) * 1000)) : auth.expiresAt
       };
 
-      // persist and refresh user/tenants if provided
       if (data.user) updated.user = data.user;
       if (data.tenants) updated.tenants = data.tenants;
 
@@ -98,7 +102,6 @@ export function AuthProvider({ children }) {
       setAuth(updated);
     } catch (err) {
       console.error("Failed to switch tenant:", err);
-      // revert on failure
       setAuth(auth);
     }
   };
@@ -106,7 +109,7 @@ export function AuthProvider({ children }) {
   const refreshUser = async () => {
     if (!auth) return null;
     try {
-      const userInfo = await authServiceApi.getMe();
+      const userInfo = await authApi.getMe();
       const updated = { ...auth, user: userInfo };
       authStorage.saveAuth(updated);
       setAuth(updated);
