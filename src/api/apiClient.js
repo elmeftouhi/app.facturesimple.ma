@@ -18,17 +18,25 @@ async function request(path, { method = "GET", headers = {}, body } = {}) {
     config.body = JSON.stringify(body);
   }
 
-  const response = await fetch(url, config);
-  const data = await response.json().catch(() => null);
+  // Dispatch loading start
+  window.dispatchEvent(new CustomEvent("api-request-start"));
 
-  if (!response.ok) {
-    const error = new Error(data?.message || response.statusText || "API request failed");
-    error.status = response.status;
-    error.payload = data;
-    throw error;
+  try {
+    const response = await fetch(url, config);
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const error = new Error(data?.message || response.statusText || "API request failed");
+      error.status = response.status;
+      error.payload = data;
+      throw error;
+    }
+
+    return data;
+  } finally {
+    // Dispatch loading end
+    window.dispatchEvent(new CustomEvent("api-request-end"));
   }
-
-  return data;
 }
 
 export function get(path, options) {

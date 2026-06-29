@@ -84,13 +84,11 @@ export function AuthProvider({ children }) {
   const selectTenant = async (tenant) => {
     if (!auth) return;
 
-    const optimistic = { ...auth, selectedTenant: tenant };
-    setAuth(optimistic);
-
     try {
       const data = await authApi.switchTenant(tenant.id || tenant.tenantId || tenant.name);
       const updated = {
-        ...optimistic,
+        ...auth,
+        selectedTenant: tenant,
         token: data.token || data.accessToken || data.idToken || data.jwt || auth.token,
         expiresAt: data.expiresAt || data.expiresIn ? (data.expiresAt || (Date.now() + (data.expiresIn || 0) * 1000)) : auth.expiresAt
       };
@@ -102,7 +100,6 @@ export function AuthProvider({ children }) {
       setAuth(updated);
     } catch (err) {
       console.error("Failed to switch tenant:", err);
-      setAuth(auth);
     }
   };
 

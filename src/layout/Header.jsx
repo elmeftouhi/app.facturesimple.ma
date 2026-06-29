@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../context/AuthContext";
 import TenantSelector from "../components/TenantSelector";
 
 function Header() {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [tenantMenuOpen, setTenantMenuOpen] = useState(false);
   const [switchingTenant, setSwitchingTenant] = useState(false);
@@ -71,6 +73,9 @@ function Header() {
   const handleSelectTenant = (tenant) => {
     setSwitchingTenant(true);
     Promise.resolve(selectTenant(tenant))
+      .then(() => {
+        navigate("/dashboard");
+      })
       .catch((err) => console.error(err))
       .finally(() => {
         setSwitchingTenant(false);
