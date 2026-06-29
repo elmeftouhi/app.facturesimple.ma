@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { saveAuth } from "../auth/authStorage";
 import { useAuth } from "../context/AuthContext";
-import { listTenants } from "../entities/tenant/api/tenantApi";
-import { normalizeTenantList } from "../entities/tenant/model/tenantModel";
-import TenantSelector from "../entities/tenant/ui/TenantSelector";
+import TenantSelector from "../components/TenantSelector";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,7 +12,7 @@ function Header() {
   const [refreshingUser, setRefreshingUser] = useState(false);
   const [tenantList, setTenantList] = useState([]);
   const tenantMenuRef = useRef(null);
-  const { auth, logout, selectTenant, refreshUser } = useAuth();
+  const { auth, logout, selectTenant, refreshUser, refreshTenants } = useAuth();
 
   const userName =
     auth?.user?.firstName || auth?.user?.lastName || auth?.user?.email || "Account";
@@ -63,10 +60,7 @@ function Header() {
     if (!auth) return;
 
     try {
-      const tenantsResponse = await listTenants();
-      const tenantsList = normalizeTenantList(tenantsResponse);
-      const updated = { ...auth, tenants: tenantsList };
-      saveAuth(updated);
+      const tenantsList = await refreshTenants();
       setTenantList(tenantsList);
       setTenantMenuOpen(true);
     } catch (err) {

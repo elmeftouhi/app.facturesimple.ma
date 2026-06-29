@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import AuthForm from "../entities/auth/ui/AuthForm";
+import AuthForm from "../components/AuthForm";
 import { useAuth } from "../context/AuthContext";
 
 const registerFields = [

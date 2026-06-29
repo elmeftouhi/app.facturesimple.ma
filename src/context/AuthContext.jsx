@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import * as authApi from "../entities/auth/api/authApi";
-import { buildAuthSession, normalizeTenantList } from "../entities/auth/model/authModel";
+import * as authApi from "../api/authApi";
+import { buildAuthSession, normalizeTenantList } from "../utils/authMappers";
 import * as authStorage from "../auth/authStorage";
 
 const AuthContext = createContext(null);
@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
       setAuth(updated);
       return data;
     } catch (err) {
-      console.error("Failed to fetch user info or tenants:", err);
+      console.error("Failed to fetch user info or tenants after login:", err);
     }
 
     setAuth(savedAuth);
@@ -63,7 +63,7 @@ export function AuthProvider({ children }) {
       setAuth(updated);
       return data;
     } catch (err) {
-      console.error("Failed to fetch user info or tenants:", err);
+      console.error("Failed to fetch user info or tenants after register:", err);
     }
 
     setAuth(savedAuth);
@@ -120,8 +120,23 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const refreshTenants = async () => {
+    if (!auth) return [];
+    try {
+      const tenantsResponse = await authApi.getTenants();
+      const tenantsList = normalizeTenantList(tenantsResponse);
+      const updated = { ...auth, tenants: tenantsList };
+      authStorage.saveAuth(updated);
+      setAuth(updated);
+      return tenantsList;
+    } catch (err) {
+      console.error("Failed to refresh tenants:", err);
+      return auth.tenants || [];
+    }
+  };
+
   const value = useMemo(
-    () => ({ auth, isAuthenticated, login, register, logout, selectTenant, refreshUser }),
+    () => ({ auth, isAuthenticated, login, register, logout, selectTenant, refreshUser, refreshTenants }),
     [auth, isAuthenticated]
   );
 

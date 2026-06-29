@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuilding, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { isSelectedTenant } from "../model/tenantModel";
+import { isSelectedTenant } from "../utils/authMappers";
 
 function TenantSelector({
   tenantMenuRef,
