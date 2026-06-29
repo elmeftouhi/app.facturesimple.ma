@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../context/AuthContext";
 import TenantSelector from "../components/TenantSelector";
 
-function Header() {
+function Header({ onMenuToggle }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [tenantMenuOpen, setTenantMenuOpen] = useState(false);
@@ -96,10 +96,20 @@ function Header() {
   };
 
   return (
-    <header className="border-b border-slate-200 bg-white/90 py-5 shadow-sm backdrop-blur-sm">
+    <header className="border-b border-slate-200 bg-white/90 py-5 shadow-sm backdrop-blur-sm print:hidden">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4">
         <div className="flex items-center gap-4">
-          <span className="text-lg font-semibold text-slate-900">Facture Simple</span>
+          {/* Hamburger Menu (visible on mobile only) */}
+          <button
+            type="button"
+            onClick={onMenuToggle}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 md:hidden"
+          >
+            <FontAwesomeIcon icon={faBars} className="h-4 w-4" />
+          </button>
+
+          {/* Logo (visible on mobile, hidden on desktop sidebar layout) */}
+          <span className="text-lg font-semibold text-slate-900 md:hidden">Facture Simple</span>
 
           <TenantSelector
             tenantMenuRef={tenantMenuRef}

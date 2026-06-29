@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes, Outlet } from "react-router-dom";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
+import Sidebar from "./layout/Sidebar";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import InvoiceList from "./pages/InvoiceList";
 import InvoiceCreate from "./pages/InvoiceCreate";
 import InvoiceDetails from "./pages/InvoiceDetails";
+import CompanySettings from "./pages/CompanySettings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
@@ -51,17 +53,25 @@ function PublicRoute({ children }) {
 
 function ProtectedLayout() {
   const { auth } = useAuth();
-  // Reset the layout DOM state and trigger unmount/remount on tenant change
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const tenantKey = auth?.selectedTenant?.id || auth?.selectedTenant?.name || "default";
 
   return (
     <ProtectedRoute>
-      <div key={tenantKey} className="min-h-screen bg-slate-50 text-slate-900">
-        <Header />
-        <main className="mx-auto max-w-6xl px-4 py-10">
-          <Outlet />
-        </main>
-        <Footer />
+      <div key={tenantKey} className="flex min-h-screen bg-slate-50 text-slate-900">
+        {/* Responsive vertical sidebar navigation */}
+        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+        {/* Content canvas containing Header, Main view, and Footer */}
+        <div className="flex flex-1 flex-col overflow-hidden min-h-screen">
+          <Header onMenuToggle={() => setSidebarOpen(true)} />
+          <main className="flex-1 px-4 py-10 md:px-8">
+            <div className="mx-auto max-w-5xl">
+              <Outlet />
+            </div>
+          </main>
+          <Footer />
+        </div>
       </div>
     </ProtectedRoute>
   );
@@ -84,6 +94,7 @@ function AppRoutes() {
           <Route path="/invoices" element={<InvoiceList />} />
           <Route path="/invoices/new" element={<InvoiceCreate />} />
           <Route path="/invoices/:id" element={<InvoiceDetails />} />
+          <Route path="/settings" element={<CompanySettings />} />
         </Route>
 
         {/* Catch-all Redirect */}

@@ -37,3 +37,13 @@ body {
   transform-origin: left;
 }
 
+@media print {
+  .print-no-layout {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+
+
