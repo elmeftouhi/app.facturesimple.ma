@@ -27,11 +27,12 @@ export function AuthProvider({ children }) {
     try {
       const [userInfo, tenantsResponse] = await Promise.all([authApi.getMe(), authApi.getTenants()]);
       const tenants = normalizeTenantList(tenantsResponse);
+      const activeTenant = tenants.find((t) => t.id === userInfo?.currentTenantId) || tenants?.[0] || null;
       const updated = {
         ...savedAuth,
         user: userInfo,
         tenants,
-        selectedTenant: tenants?.[0] || null
+        selectedTenant: activeTenant
       };
 
       authStorage.saveAuth(updated);
@@ -52,11 +53,12 @@ export function AuthProvider({ children }) {
     try {
       const [userInfo, tenantsResponse] = await Promise.all([authApi.getMe(), authApi.getTenants()]);
       const tenants = normalizeTenantList(tenantsResponse);
+      const activeTenant = tenants.find((t) => t.id === userInfo?.currentTenantId) || tenants?.[0] || null;
       const updated = {
         ...savedAuth,
         user: userInfo,
         tenants,
-        selectedTenant: tenants?.[0] || null
+        selectedTenant: activeTenant
       };
 
       authStorage.saveAuth(updated);
