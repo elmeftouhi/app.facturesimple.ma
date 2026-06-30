@@ -10,6 +10,7 @@ import InvoiceList from "./pages/InvoiceList";
 import InvoiceCreate from "./pages/InvoiceCreate";
 import InvoiceDetails from "./pages/InvoiceDetails";
 import CompanySettings from "./pages/CompanySettings";
+import UserProfile from "./pages/UserProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
@@ -95,6 +96,7 @@ function AppRoutes() {
           <Route path="/invoices/new" element={<InvoiceCreate />} />
           <Route path="/invoices/:id" element={<InvoiceDetails />} />
           <Route path="/settings" element={<CompanySettings />} />
+          <Route path="/profile" element={<UserProfile />} />
         </Route>
 
         {/* Catch-all Redirect */}

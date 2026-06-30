@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function AuthForm({ title, fields, submitText, footerText, onSubmit }) {
+function AuthForm({ title, fields, submitText, footerText, onSubmit, errors = {} }) {
   const initialState = fields.reduce((acc, field) => {
     acc[field.name] = field.type === "checkbox" ? false : "";
     return acc;
@@ -38,7 +38,11 @@ function AuthForm({ title, fields, submitText, footerText, onSubmit }) {
                 name={field.name}
                 value={values[field.name]}
                 onChange={handleChange}
-                className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                className={`w-full rounded-2xl border bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:ring-2 ${
+                  errors[field.name]
+                    ? "border-rose-400 focus:border-rose-500 focus:ring-rose-100"
+                    : "border-slate-300 focus:border-sky-500 focus:ring-sky-100"
+                }`}
                 rows={4}
               />
             ) : (
@@ -49,8 +53,12 @@ function AuthForm({ title, fields, submitText, footerText, onSubmit }) {
                 value={field.type === "checkbox" ? undefined : values[field.name]}
                 checked={field.type === "checkbox" ? values[field.name] : undefined}
                 onChange={handleChange}
-                className={`w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100 ${
-                  field.type === "checkbox" ? "h-4 w-4" : ""
+                className={`w-full rounded-2xl border bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:ring-2 ${
+                  field.type === "checkbox"
+                    ? "h-4 w-4"
+                    : errors[field.name]
+                      ? "border-rose-400 focus:border-rose-500 focus:ring-rose-100"
+                      : "border-slate-300 focus:border-sky-500 focus:ring-sky-100"
                 }`}
               />
             )}

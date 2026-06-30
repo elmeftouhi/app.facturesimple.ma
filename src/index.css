@@ -46,4 +46,35 @@ body {
   }
 }
 
+@keyframes slide-down-fade {
+  from {
+    transform: translate3d(-50%, -2rem, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up-fade {
+  from {
+    transform: translate3d(-50%, 0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(-50%, -2rem, 0);
+    opacity: 0;
+  }
+}
+
+.animate-alert-enter {
+  animation: slide-down-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-alert-exit {
+  animation: slide-up-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+
 

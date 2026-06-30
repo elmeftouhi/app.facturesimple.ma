@@ -32,3 +32,7 @@ export async function getTenants() {
 export async function switchTenant(tenantId) {
   return apiClient.post(AUTH_ENDPOINTS.switchTenant, { tenantId });
 }
+
+export async function updateMe(payload) {
+  return apiClient.put(AUTH_ENDPOINTS.me, payload);
+}
