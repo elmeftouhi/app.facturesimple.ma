@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../context/AuthContext";
@@ -140,6 +140,13 @@ function Header({ onMenuToggle }) {
                 Signed in as
                 <div className="font-semibold text-slate-900">{userName}</div>
               </div>
+              <Link
+                to="/profile"
+                onClick={() => setMenuOpen(false)}
+                className="block w-full rounded-2xl px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100"
+              >
+                Profile
+              </Link>
               <button
                 type="button"
                 onClick={handleLogout}

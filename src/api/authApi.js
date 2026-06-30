@@ -36,3 +36,7 @@ export async function switchTenant(tenantId) {
 export async function updateMe(payload) {
   return apiClient.put(AUTH_ENDPOINTS.me, payload);
 }
+
+export async function changePassword(payload) {
+  return apiClient.put(`${AUTH_ENDPOINTS.me}/password`, payload);
+}

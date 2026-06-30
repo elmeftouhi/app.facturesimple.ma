@@ -6,16 +6,14 @@ import {
   faUserFriends,
   faTimes,
   faLayerGroup,
-  faCog,
-  faUser
+  faCog
 } from "@fortawesome/free-solid-svg-icons";
 
 const NAV_ITEMS = [
   { path: "/dashboard", label: "Dashboard", icon: faChartLine },
   { path: "/invoices", label: "Invoices", icon: faFileInvoice },
   { path: "/clients", label: "Clients", icon: faUserFriends, isPlaceholder: true },
-  { path: "/settings", label: "Settings", icon: faCog },
-  { path: "/profile", label: "Profile", icon: faUser }
+  { path: "/settings", label: "Settings", icon: faCog }
 ];
 
 function Sidebar({ open, onClose }) {

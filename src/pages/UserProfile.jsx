@@ -7,15 +7,18 @@ import {
   faSpinner,
   faEnvelope,
   faPhone,
-  faUserShield
+  faUserShield,
+  faLock,
+  faBuilding
 } from "@fortawesome/free-solid-svg-icons";
-import { getMe, updateMe } from "../api/authApi";
+import { getMe, updateMe, changePassword, getTenants } from "../api/authApi";
 import { useAuth } from "../context/AuthContext";
 
 function UserProfile() {
   const { refreshUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
   const [error, setError] = useState("");
   
   // Alert states
@@ -31,7 +34,17 @@ function UserProfile() {
     lastName: "",
     phone: "",
     status: "",
-    roles: []
+    roles: [],
+    defaultTenantId: ""
+  });
+
+  const [tenants, setTenants] = useState([]);
+
+  // Change Password Form State
+  const [passwordForm, setPasswordForm] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: ""
   });
 
   const fetchProfile = async () => {
@@ -39,6 +52,9 @@ function UserProfile() {
     setError("");
     try {
       const data = await getMe();
+      const tenantsList = await getTenants();
+      setTenants(tenantsList || []);
+
       if (data) {
         setProfileForm({
           email: data.email || "",
@@ -47,7 +63,8 @@ function UserProfile() {
           lastName: data.lastName || "",
           phone: data.phone || "",
           status: data.status || "",
-          roles: data.roles || []
+          roles: data.roles || [],
+          defaultTenantId: data.defaultTenantId || ""
         });
       }
     } catch (err) {
@@ -83,7 +100,7 @@ function UserProfile() {
     }, 4300);
   };
 
-  const handleSubmit = async (e) => {
+  const handleProfileSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     setError("");
@@ -92,7 +109,8 @@ function UserProfile() {
       const payload = {
         firstName: profileForm.firstName.trim() || undefined,
         lastName: profileForm.lastName.trim() || undefined,
-        phone: profileForm.phone.trim() || undefined
+        phone: profileForm.phone.trim() || undefined,
+        defaultTenantId: profileForm.defaultTenantId ? Number(profileForm.defaultTenantId) : undefined
       };
 
       await updateMe(payload);
@@ -102,15 +120,55 @@ function UserProfile() {
       if (refreshedUser) {
         setProfileForm((prev) => ({
           ...prev,
-          displayedName: refreshedUser.displayedName || prev.displayedName
+          displayedName: refreshedUser.displayedName || prev.displayedName,
+          defaultTenantId: refreshedUser.defaultTenantId || prev.defaultTenantId
         }));
       }
 
-      triggerAlert("Profile updated successfully!", "success");
+      triggerAlert("Profile details updated successfully!", "success");
     } catch (err) {
       triggerAlert(err.message || "Failed to update profile.", "error");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!passwordForm.oldPassword) {
+      triggerAlert("Current password is required.", "error");
+      return;
+    }
+    if (!passwordForm.newPassword || passwordForm.newPassword.length < 8) {
+      triggerAlert("New password must be at least 8 characters long.", "error");
+      return;
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      triggerAlert("Confirm password does not match new password.", "error");
+      return;
+    }
+
+    setSavingPassword(true);
+
+    try {
+      await changePassword({
+        oldPassword: passwordForm.oldPassword,
+        newPassword: passwordForm.newPassword
+      });
+
+      setPasswordForm({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      });
+
+      triggerAlert("Password updated successfully!", "success");
+    } catch (err) {
+      triggerAlert(err.message || "Failed to update password.", "error");
+    } finally {
+      setSavingPassword(false);
     }
   };
 
@@ -128,7 +186,7 @@ function UserProfile() {
       {/* Title */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">User Profile</h1>
-        <p className="text-sm text-slate-500">Manage your personal settings, display name, and contact details.</p>
+        <p className="text-sm text-slate-500">Manage your personal settings, password credentials, and default workspace.</p>
       </div>
 
       {/* Viewport Floating Alert Banner */}
@@ -160,75 +218,164 @@ function UserProfile() {
         </div>
       )}
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Left Form: Edit Details */}
-        <form onSubmit={handleSubmit} className="md:col-span-2 space-y-6">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <FontAwesomeIcon icon={faUser} className="text-slate-400" />
-              <span>Personal Details</span>
-            </h2>
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Left Side Forms */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Edit Profile Form */}
+          <form onSubmit={handleProfileSubmit}>
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <FontAwesomeIcon icon={faUser} className="text-slate-400" />
+                <span>Personal Details</span>
+              </h2>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-500">First Name</label>
-                <input
-                  type="text"
-                  placeholder="Yassine"
-                  value={profileForm.firstName}
-                  onChange={(e) => setProfileForm({ ...profileForm, firstName: e.target.value })}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-500">Last Name</label>
-                <input
-                  type="text"
-                  placeholder="EL MEFTOUHI"
-                  value={profileForm.lastName}
-                  onChange={(e) => setProfileForm({ ...profileForm, lastName: e.target.value })}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="mb-1.5 block text-xs font-semibold text-slate-500">Phone Number</label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                    <FontAwesomeIcon icon={faPhone} className="h-4 w-4" />
-                  </span>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-slate-500">First Name</label>
                   <input
-                    type="tel"
-                    placeholder="+212661098984"
-                    value={profileForm.phone}
-                    onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
+                    type="text"
+                    placeholder="First Name"
+                    value={profileForm.firstName}
+                    onChange={(e) => setProfileForm({ ...profileForm, firstName: e.target.value })}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-slate-500">Last Name</label>
+                  <input
+                    type="text"
+                    placeholder="Last Name"
+                    value={profileForm.lastName}
+                    onChange={(e) => setProfileForm({ ...profileForm, lastName: e.target.value })}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-slate-500">Phone Number</label>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                      <FontAwesomeIcon icon={faPhone} className="h-4 w-4" />
+                    </span>
+                    <input
+                      type="tel"
+                      placeholder="Phone number"
+                      value={profileForm.phone}
+                      onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-slate-500">Default Workspace</label>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                      <FontAwesomeIcon icon={faBuilding} className="h-4 w-4" />
+                    </span>
+                    <select
+                      value={profileForm.defaultTenantId}
+                      onChange={(e) => setProfileForm({ ...profileForm, defaultTenantId: e.target.value })}
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
+                    >
+                      <option value="">Select workspace...</option>
+                      {tenants.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.name} {t.isDefault ? "(Current Default)" : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-3">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex items-center justify-center rounded-2xl bg-sky-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 disabled:opacity-50"
+                >
+                  {saving ? (
+                    <>
+                      <FontAwesomeIcon icon={faSpinner} className="mr-2 h-4 w-4 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <span>Update Profile</span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </form>
+
+          {/* Change Password Form */}
+          <form onSubmit={handlePasswordSubmit}>
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <FontAwesomeIcon icon={faLock} className="text-slate-400" />
+                <span>Security & Credentials</span>
+              </h2>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-slate-500">Current Password</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    value={passwordForm.oldPassword}
+                    onChange={(e) => setPasswordForm({ ...passwordForm, oldPassword: e.target.value })}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-slate-500">New Password</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Min 8 chars"
+                    value={passwordForm.newPassword}
+                    onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-slate-500">Confirm New Password</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    value={passwordForm.confirmPassword}
+                    onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
                   />
                 </div>
               </div>
-            </div>
 
-            <div className="flex justify-end pt-3">
-              <button
-                type="submit"
-                disabled={saving}
-                className="flex items-center justify-center rounded-2xl bg-sky-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 disabled:opacity-50"
-              >
-                {saving ? (
-                  <>
-                    <FontAwesomeIcon icon={faSpinner} className="mr-2 h-4 w-4 animate-spin" />
-                    <span>Saving...</span>
-                  </>
-                ) : (
-                  <span>Update Profile</span>
-                )}
-              </button>
+              <div className="flex justify-end pt-3">
+                <button
+                  type="submit"
+                  disabled={savingPassword}
+                  className="flex items-center justify-center rounded-2xl bg-sky-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 disabled:opacity-50"
+                >
+                  {savingPassword ? (
+                    <>
+                      <FontAwesomeIcon icon={faSpinner} className="mr-2 h-4 w-4 animate-spin" />
+                      <span>Updating...</span>
+                    </>
+                  ) : (
+                    <span>Change Password</span>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
 
-        {/* Right Info: Read Only Metadata */}
+        {/* Right Side: Account metadata card */}
         <div className="space-y-6">
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
             <h2 className="text-lg font-bold text-slate-900">Account Status</h2>
