@@ -11,6 +11,7 @@ import InvoiceCreate from "./pages/InvoiceCreate";
 import InvoiceDetails from "./pages/InvoiceDetails";
 import CompanySettings from "./pages/CompanySettings";
 import UserProfile from "./pages/UserProfile";
+import CustomerList from "./pages/CustomerList";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -178,6 +179,7 @@ function AppRoutes() {
           <Route path="/invoices/:id" element={<InvoiceDetails />} />
           <Route path="/settings" element={<CompanySettings />} />
           <Route path="/profile" element={<UserProfile />} />
+          <Route path="/clients" element={<CustomerList />} />
         </Route>
 
         {/* Catch-all Redirect */}

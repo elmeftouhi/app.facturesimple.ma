@@ -12,7 +12,7 @@ import {
 const NAV_ITEMS = [
   { path: "/dashboard", label: "Dashboard", icon: faChartLine },
   { path: "/invoices", label: "Invoices", icon: faFileInvoice },
-  { path: "/clients", label: "Clients", icon: faUserFriends, isPlaceholder: true },
+  { path: "/clients", label: "Clients", icon: faUserFriends },
   { path: "/settings", label: "Settings", icon: faCog }
 ];
 
