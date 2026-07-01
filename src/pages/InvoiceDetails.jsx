@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
@@ -34,6 +35,7 @@ const PAYMENT_METHODS = [
 ];
 
 function InvoiceDetails() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [invoice, setInvoice] = useState(null);
@@ -147,7 +149,7 @@ function InvoiceDetails() {
     return (
       <div className="flex flex-col items-center justify-center py-40 text-slate-400">
         <FontAwesomeIcon icon={faSpinner} className="h-8 w-8 animate-spin" />
-        <p className="mt-3 text-sm">Fetching invoice details...</p>
+        <p className="mt-3 text-sm">{t("common.loading", "Loading...")}</p>
       </div>
     );
   }
@@ -160,7 +162,7 @@ function InvoiceDetails() {
         </div>
         <div className="text-center">
           <Link to="/invoices" className="text-sm font-semibold text-sky-600 hover:underline">
-            Back to Invoices list
+            {t("invoice.back_to_list")}
           </Link>
         </div>
       </div>
@@ -218,9 +220,9 @@ function InvoiceDetails() {
           </Link>
           <div>
             <h1 className="text-xl font-bold text-slate-900">
-              Invoice details: {invoice.formattedNumber || `#${invoice.invoiceNumber}`}
+              {t("invoice.details")}: {invoice.formattedNumber || `#${invoice.invoiceNumber}`}
             </h1>
-            <p className="text-xs text-slate-500">Record payments, manage statuses, or export to PDF.</p>
+            <p className="text-xs text-slate-500">{t("invoice.details_subtitle")}</p>
           </div>
         </div>
 
@@ -230,7 +232,7 @@ function InvoiceDetails() {
             className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
             <FontAwesomeIcon icon={faPrint} className="h-3.5 w-3.5" />
-            <span>Print Invoice</span>
+            <span>{t("invoice.print")}</span>
           </button>
           
           {invoice.remainingAmount > 0 && (
@@ -239,7 +241,7 @@ function InvoiceDetails() {
               className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700"
             >
               <FontAwesomeIcon icon={faDollarSign} className="h-3.5 w-3.5" />
-              <span>Record Payment</span>
+              <span>{t("invoice.record_payment")}</span>
             </button>
           )}
         </div>
@@ -252,15 +254,15 @@ function InvoiceDetails() {
         {/* Template Switcher Bar */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-slate-200 bg-white p-4 shadow-sm print:hidden">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Template Layout:</span>
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t("invoice.template_layout")}:</span>
             <select
               value={selectedTemplate}
               onChange={(e) => setSelectedTemplate(e.target.value)}
               className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:border-sky-500"
             >
-              <option value="modern">Modern Minimalist</option>
-              <option value="classic">Professional B2B (Classic Grid)</option>
-              <option value="elegant">Elegant Editorial (Serif Style)</option>
+              <option value="modern">{t("invoice.modern_template")}</option>
+              <option value="classic">{t("invoice.classic_template")}</option>
+              <option value="elegant">{t("invoice.elegant_template")}</option>
             </select>
           </div>
           <button
@@ -271,7 +273,7 @@ function InvoiceDetails() {
             }}
             className="text-xxs font-bold uppercase tracking-wider text-sky-600 hover:text-sky-700 transition px-3 py-1.5 rounded-xl hover:bg-sky-50 border border-transparent hover:border-sky-100"
           >
-            Set as default
+            {t("invoice.set_as_default")}
           </button>
         </div>
 
@@ -296,7 +298,7 @@ function InvoiceDetails() {
                   <span className={`text-xs font-semibold uppercase tracking-wider ${
                     isClassic ? "text-slate-300" : isElegant ? "text-slate-500 italic" : "text-sky-600"
                   }`}>
-                    Invoice Statement
+                    {t("invoice.details")}
                   </span>
                   <h2 className={`mt-1 text-3xl font-black ${isClassic ? "text-white" : "text-slate-900"}`}>
                     {invoice.formattedNumber || `#${invoice.invoiceNumber}`}
@@ -348,7 +350,7 @@ function InvoiceDetails() {
                     : "rounded-2xl border border-slate-100 p-4"
                 }`}>
                   <span className={`text-xs font-semibold uppercase tracking-wider ${isElegant ? "text-slate-400 italic" : "text-slate-400"}`}>
-                    Bill To
+                    {t("invoice.billed_to")}
                   </span>
                   <div className="mt-2 font-bold text-slate-900">{invoice.customer?.name || "Inline Customer"}</div>
                   {invoice.customer?.email && <div className="mt-1 text-slate-500">{invoice.customer.email}</div>}
@@ -366,19 +368,19 @@ function InvoiceDetails() {
                     : "rounded-2xl border border-slate-100 p-4 space-y-3"
                 }`}>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Issue Date:</span>
+                    <span className="text-slate-500">{t("invoice.date")}:</span>
                     <span className="font-semibold text-slate-800">{invoice.invoiceDate}</span>
                   </div>
                   {invoice.dueDate && (
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Due Date:</span>
+                      <span className="text-slate-500">{t("invoice.due_date")}:</span>
                       <span className="font-semibold text-slate-800">{invoice.dueDate}</span>
                     </div>
                   )}
                   {invoice.description && (
                     <div className={`pt-3 ${isElegant ? "border-t border-dashed border-slate-200" : "border-t border-slate-100"}`}>
                       <span className={`block text-xs font-semibold uppercase tracking-wider ${isElegant ? "text-slate-400 italic" : "text-slate-400"}`}>
-                        Memo / Notes
+                        {t("invoice.memo")}
                       </span>
                       <p className="mt-1 text-xs text-slate-600 whitespace-pre-wrap">{invoice.description}</p>
                     </div>
@@ -397,10 +399,10 @@ function InvoiceDetails() {
                         ? "border-t-2 border-b-2 border-double border-slate-300 text-slate-600"
                         : "border-b border-slate-200"
                     }`}>
-                      <th className={`pb-3 pr-4 ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>Item / Description</th>
-                      <th className={`pb-3 pr-4 text-center ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>Qty</th>
-                      <th className={`pb-3 pr-4 text-right ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>Unit Price</th>
-                      <th className={`pb-3 text-right ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>Line Total</th>
+                      <th className={`pb-3 pr-4 ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>{t("invoice.item_description")}</th>
+                      <th className={`pb-3 pr-4 text-center ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>{t("invoice.qty")}</th>
+                      <th className={`pb-3 pr-4 text-right ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>{t("invoice.price")}</th>
+                      <th className={`pb-3 text-right ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>{t("invoice.line_total")}</th>
                     </tr>
                   </thead>
                   <tbody className={isClassic ? "divide-y divide-slate-200 border-l border-r border-b border-slate-200" : "divide-y divide-slate-100"}>
@@ -431,11 +433,11 @@ function InvoiceDetails() {
               }`}>
                 <div className="w-full max-w-sm text-sm space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Subtotal:</span>
+                    <span className="text-slate-500">{t("invoice.subtotal")}:</span>
                     <span className="font-semibold text-slate-800">{formatCurrency(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">VAT ({invoice.vatRate}%):</span>
+                    <span className="text-slate-500">{t("invoice.vat")} ({invoice.vatRate}%):</span>
                     <span className="font-semibold text-slate-800">{formatCurrency(vatAmount)}</span>
                   </div>
                   <div className={`flex justify-between border-t pt-3 text-base font-bold ${
@@ -445,17 +447,17 @@ function InvoiceDetails() {
                       ? "border-slate-200 text-slate-900"
                       : "border-slate-100 text-sky-600"
                   }`}>
-                    <span className={isElegant ? "font-black" : "text-slate-900"}>Total:</span>
+                    <span className={isElegant ? "font-black" : "text-slate-900"}>{t("invoice.total")}:</span>
                     <span className={isModern ? "text-sky-600" : "text-slate-900"}>{formatCurrency(invoiceTotal)}</span>
                   </div>
                   <div className="flex justify-between text-xs text-slate-500">
-                    <span>Collected:</span>
+                    <span>{t("invoice.collected_amount")}:</span>
                     <span>{formatCurrency(Number(invoice.paidAmount) || 0)}</span>
                   </div>
                   <div className={`flex justify-between border-t border-dashed pt-2 text-sm font-bold ${
                     isClassic ? "border-slate-200 text-rose-700 bg-rose-50/50 p-2.5 rounded-xl mt-1" : "border-slate-100 text-rose-600"
                   }`}>
-                    <span>Balance Due:</span>
+                    <span>{t("invoice.remaining")}:</span>
                     <span>{formatCurrency(Number(invoice.remainingAmount) || 0)}</span>
                   </div>
                 </div>
@@ -467,16 +469,16 @@ function InvoiceDetails() {
           {/* Payments List Block (always shown, hidden from printing if empty) */}
           {invoice.payments && invoice.payments.length > 0 ? (
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4 print:border-none print:shadow-none">
-              <h3 className="text-lg font-bold text-slate-900 print:text-base">Payment History</h3>
+              <h3 className="text-lg font-bold text-slate-900 print:text-base">{t("invoice.payments_history")}</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm border-collapse">
                   <thead>
                     <tr className="border-b border-slate-100 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                      <th className="pb-2">Date</th>
-                      <th className="pb-2">Method</th>
-                      <th className="pb-2">Reference</th>
-                      <th className="pb-2 text-right">Amount</th>
-                      <th className="pb-2 text-center print:hidden">Action</th>
+                      <th className="pb-2">{t("invoice.date", "Date")}</th>
+                      <th className="pb-2">{t("invoice.payment_method_label", "Method")}</th>
+                      <th className="pb-2">{t("invoice.payment_reference_label", "Reference")}</th>
+                      <th className="pb-2 text-right">{t("invoice.amount")}</th>
+                      <th className="pb-2 text-center print:hidden">{t("invoice.actions")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -515,9 +517,9 @@ function InvoiceDetails() {
         <div className="space-y-6 print:hidden">
           {/* Status Administration */}
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-            <h3 className="text-lg font-bold text-slate-900">Manage Status</h3>
+            <h3 className="text-lg font-bold text-slate-900">{t("invoice.manage_status")}</h3>
             <div className="text-sm text-slate-500">
-              Update the lifecycle state of this invoice to transition stages.
+              {t("invoice.manage_status_desc", "Update the lifecycle state of this invoice to transition stages.")}
             </div>
 
             <div className="grid gap-2">
@@ -549,7 +551,7 @@ function InvoiceDetails() {
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
               <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <FontAwesomeIcon icon={faHistory} className="text-slate-400 h-4.5 w-4.5" />
-                <span>Audit History</span>
+                <span>{t("invoice.audit_history")}</span>
               </h3>
 
               <div className="flow-root">
@@ -569,12 +571,12 @@ function InvoiceDetails() {
                           <div className="flex-1 min-w-0 pt-1 flex flex-col sm:flex-row sm:justify-between gap-1">
                             <div>
                               <p className="text-slate-700">
-                                Changed from <span className="font-semibold text-slate-500">{log.oldStatus}</span> to{" "}
+                                {t("invoice.changed_from", "Changed from")} <span className="font-semibold text-slate-500">{log.oldStatus}</span> {t("invoice.to_status", "to")}{" "}
                                 <span className="font-bold text-slate-900">{log.newStatus}</span>
                               </p>
                               {log.createdBy && (
                                 <p className="text-slate-400 text-xxs mt-0.5">
-                                  by <span className="font-medium text-slate-500">{log.createdBy}</span>
+                                  {t("invoice.changed_by", "by")} <span className="font-medium text-slate-500">{log.createdBy}</span>
                                 </p>
                               )}
                             </div>
@@ -601,7 +603,7 @@ function InvoiceDetails() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 print:hidden">
           <div className="relative w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-lg font-bold text-slate-900">Record a Payment</h3>
+              <h3 className="text-lg font-bold text-slate-900">{t("invoice.record_payment_title")}</h3>
               <button
                 type="button"
                 onClick={() => setShowPaymentModal(false)}
@@ -613,7 +615,7 @@ function InvoiceDetails() {
 
             <form onSubmit={handleAddPaymentSubmit} className="space-y-4 text-sm">
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-500">Payment Date *</label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-500">{t("invoice.payment_date_label")} *</label>
                 <input
                   type="date"
                   required
@@ -624,7 +626,7 @@ function InvoiceDetails() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-500">Payment Method *</label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-500">{t("invoice.payment_method_label")} *</label>
                 <select
                   value={paymentForm.paymentMethod}
                   onChange={(e) => setPaymentForm({ ...paymentForm, paymentMethod: e.target.value })}
@@ -639,7 +641,7 @@ function InvoiceDetails() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-500">Paid Amount (MAD) *</label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-500">{t("invoice.paid_amount_label")} ({invoice.company?.currency || "MAD"}) *</label>
                 <input
                   type="number"
                   required
@@ -651,15 +653,15 @@ function InvoiceDetails() {
                   className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white font-bold"
                 />
                 <span className="mt-1 block text-xxs text-slate-400">
-                  Max remaining: {formatCurrency(invoice.remainingAmount)}
+                  {t("invoice.max_remaining")}: {formatCurrency(invoice.remainingAmount)}
                 </span>
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-500">Payment Reference</label>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-500">{t("invoice.payment_reference_label")}</label>
                 <input
                   type="text"
-                  placeholder="e.g. Check number, transaction ID"
+                  placeholder={t("invoice.payment_reference_placeholder", "e.g. Check number, transaction ID")}
                   value={paymentForm.paymentReference}
                   onChange={(e) => setPaymentForm({ ...paymentForm, paymentReference: e.target.value })}
                   className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
@@ -672,7 +674,7 @@ function InvoiceDetails() {
                   onClick={() => setShowPaymentModal(false)}
                   className="flex-1 rounded-2xl border border-slate-200 py-3 text-center text-xs font-semibold text-slate-500 hover:bg-slate-50"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
                 <button
                   type="submit"
@@ -682,10 +684,10 @@ function InvoiceDetails() {
                   {recordingPayment ? (
                     <>
                       <FontAwesomeIcon icon={faSpinner} className="mr-1.5 h-3 w-3 animate-spin" />
-                      <span>Saving...</span>
+                      <span>{t("common.saving", "Saving...")}</span>
                     </>
                   ) : (
-                    <span>Add Payment</span>
+                    <span>{t("invoice.add_payment_btn")}</span>
                   )}
                 </button>
               </div>
