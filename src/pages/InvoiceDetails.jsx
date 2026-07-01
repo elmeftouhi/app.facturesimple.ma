@@ -566,15 +566,23 @@ function InvoiceDetails() {
                               {index + 1}
                             </span>
                           </div>
-                          <div className="flex-1 min-w-0 pt-1.5 flex justify-between space-x-4">
+                          <div className="flex-1 min-w-0 pt-1 flex flex-col sm:flex-row sm:justify-between gap-1">
                             <div>
                               <p className="text-slate-700">
-                                Status transitioned to <span className="font-semibold text-slate-900">{log.toStatus}</span>
+                                Changed from <span className="font-semibold text-slate-500">{log.oldStatus}</span> to{" "}
+                                <span className="font-bold text-slate-900">{log.newStatus}</span>
                               </p>
-                              {log.notes && <p className="text-slate-400 mt-0.5 italic">{log.notes}</p>}
+                              {log.createdBy && (
+                                <p className="text-slate-400 text-xxs mt-0.5">
+                                  by <span className="font-medium text-slate-500">{log.createdBy}</span>
+                                </p>
+                              )}
                             </div>
-                            <div className="text-right text-slate-400 whitespace-nowrap">
-                              <time>{new Date(log.changedAt).toLocaleDateString()}</time>
+                            <div className="text-left sm:text-right text-slate-400 whitespace-nowrap text-xxs pt-0.5">
+                              <time>
+                                {new Date(log.changedAt).toLocaleDateString()} at{" "}
+                                {new Date(log.changedAt).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
+                              </time>
                             </div>
                           </div>
                         </div>
