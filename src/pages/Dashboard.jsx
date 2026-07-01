@@ -12,8 +12,10 @@ import {
 import { getInvoices } from "../api/invoiceApi";
 import { getCustomers } from "../api/customerApi";
 import { formatCurrency } from "../utils";
+import { useAuth } from "../context/AuthContext";
 
 function Dashboard() {
+  const { selectedExercice } = useAuth();
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [customerCount, setCustomerCount] = useState(0);
@@ -27,13 +29,16 @@ function Dashboard() {
 
   useEffect(() => {
     async function loadDashboardData() {
+      setLoading(true);
       try {
-        // Fetch last 5 invoices
-        const invResponse = await getInvoices({ page: 0, size: 5 });
+        const exerciceId = selectedExercice?.id;
+        
+        // Fetch last 5 invoices filtered by active fiscal year
+        const invResponse = await getInvoices({ page: 0, size: 5, exerciceId });
         setInvoices(invResponse.content || []);
 
         // Also fetch full invoice metrics from page size
-        const allInvResponse = await getInvoices({ page: 0, size: 100 });
+        const allInvResponse = await getInvoices({ page: 0, size: 100, exerciceId });
         const list = allInvResponse.content || [];
         let invoiced = 0;
         let paid = 0;
@@ -62,7 +67,7 @@ function Dashboard() {
     }
 
     loadDashboardData();
-  }, []);
+  }, [selectedExercice?.id]);
 
   const getStatusBadgeClass = (status) => {
     switch (status) {

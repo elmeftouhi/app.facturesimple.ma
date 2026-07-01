@@ -15,8 +15,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { getInvoices, deleteInvoice } from "../api/invoiceApi";
 import { formatCurrency } from "../utils";
+import { useAuth } from "../context/AuthContext";
 
 const STATUS_OPTIONS = [
+  // ... existing option array details ...
   { value: "", label: "All Statuses" },
   { value: "DRAFT", label: "Draft" },
   { value: "PRINTED", label: "Printed" },
@@ -27,6 +29,7 @@ const STATUS_OPTIONS = [
 ];
 
 function InvoiceList() {
+  const { selectedExercice } = useAuth();
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -59,6 +62,7 @@ function InvoiceList() {
         status: filters.status || undefined,
         fromDate: filters.fromDate || undefined,
         toDate: filters.toDate || undefined,
+        exerciceId: selectedExercice?.id || undefined,
         page: filters.page,
         size: filters.size
       });
@@ -97,7 +101,7 @@ function InvoiceList() {
 
   useEffect(() => {
     fetchInvoices();
-  }, [filters.status, filters.fromDate, filters.toDate, filters.page]);
+  }, [filters.status, filters.fromDate, filters.toDate, filters.page, selectedExercice?.id]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuilding,
@@ -20,6 +21,7 @@ import {
   deleteBank,
   setDefaultBank
 } from "../api/companyApi";
+import ExercicesSettings from "./ExercicesSettings";
 
 const CURRENCIES = [
   { code: "MAD", label: "Moroccan Dirham (MAD)" },
@@ -29,6 +31,10 @@ const CURRENCIES = [
 ];
 
 function CompanySettings() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") || "company";
+  const setActiveTab = (tab) => setSearchParams({ tab });
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [exists, setExists] = useState(false);
@@ -251,9 +257,36 @@ function CompanySettings() {
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Left Side: Profile Form */}
-        <form onSubmit={handleCompanySubmit} className="space-y-6 lg:col-span-2">
+      {/* Tabs */}
+      <div className="flex border-b border-slate-200">
+        <button
+          type="button"
+          onClick={() => setActiveTab("company")}
+          className={`border-b-2 px-6 py-3 text-sm font-semibold transition ${
+            activeTab === "company"
+              ? "border-sky-600 text-sky-700"
+              : "border-transparent text-slate-500 hover:text-slate-800"
+          }`}
+        >
+          Company Profile
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("exercices")}
+          className={`border-b-2 px-6 py-3 text-sm font-semibold transition ${
+            activeTab === "exercices"
+              ? "border-sky-600 text-sky-700"
+              : "border-transparent text-slate-500 hover:text-slate-800"
+          }`}
+        >
+          Fiscal Years (Exercices)
+        </button>
+      </div>
+
+      {activeTab === "company" && (
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Left Side: Profile Form */}
+          <form onSubmit={handleCompanySubmit} className="space-y-6 lg:col-span-2">
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <FontAwesomeIcon icon={faBuilding} className="text-slate-400" />
@@ -525,6 +558,11 @@ function CompanySettings() {
           </div>
         </div>
       </div>
+      )}
+
+      {activeTab === "exercices" && (
+        <ExercicesSettings />
+      )}
 
       {/* Add/Edit Bank Modal Overlay */}
       {showBankModal && (

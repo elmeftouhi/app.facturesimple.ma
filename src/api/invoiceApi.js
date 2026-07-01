@@ -6,6 +6,7 @@ export async function getInvoices(params = {}) {
   if (params.fromDate) query.append("fromDate", params.fromDate);
   if (params.toDate) query.append("toDate", params.toDate);
   if (params.customerId) query.append("customerId", params.customerId);
+  if (params.exerciceId) query.append("exerciceId", params.exerciceId);
   query.append("page", params.page || 0);
   query.append("size", params.size || 20);
 

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../context/AuthContext";
 import TenantSelector from "../components/TenantSelector";
+import ExerciceSelector from "../components/ExerciceSelector";
 
 function Header({ onMenuToggle }) {
   const navigate = useNavigate();
@@ -121,6 +122,7 @@ function Header({ onMenuToggle }) {
             onSelect={handleSelectTenant}
             onCreateNewCompany={handleCreateNewCompany}
           />
+          <ExerciceSelector />
         </div>
 
         <div className="relative">

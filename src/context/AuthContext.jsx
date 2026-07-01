@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import * as authApi from "../api/authApi";
+import * as exerciceApi from "../api/exerciceApi";
 import { buildAuthSession, normalizeTenantList } from "../utils/authMappers";
 import * as authStorage from "../auth/authStorage";
 
@@ -11,6 +12,10 @@ export function AuthProvider({ children }) {
     return stored && !authStorage.isExpired(stored) ? stored : null;
   });
 
+  // Fiscal Years (Exercices) States
+  const [exercices, setExercices] = useState([]);
+  const [selectedExercice, setSelectedExercice] = useState(null);
+
   useEffect(() => {
     if (auth && authStorage.isExpired(auth)) {
       authStorage.clearAuth();
@@ -19,6 +24,60 @@ export function AuthProvider({ children }) {
   }, [auth]);
 
   const isAuthenticated = Boolean(auth?.token && !authStorage.isExpired(auth));
+
+  const refreshExercices = async (tenantId) => {
+    if (!auth) return [];
+    try {
+      const list = await exerciceApi.getExercices();
+      setExercices(list || []);
+
+      const activeTenantId = tenantId || auth?.selectedTenant?.id;
+      if (!activeTenantId) return list;
+
+      const stored = localStorage.getItem(`fs_exercice_${activeTenantId}`);
+      let parsed = null;
+      if (stored) {
+        try {
+          parsed = JSON.parse(stored);
+        } catch (e) {}
+      }
+
+      // If stored preference matches an item in the retrieved list, select it.
+      // Otherwise, select the first OPEN exercice, or fall back to the first available one.
+      const match = list.find((e) => e.id === parsed?.id);
+      if (match) {
+        setSelectedExercice(match);
+      } else {
+        const active = list.find((e) => e.status === "OPEN") || list?.[0] || null;
+        setSelectedExercice(active);
+        if (active) {
+          localStorage.setItem(`fs_exercice_${activeTenantId}`, JSON.stringify(active));
+        }
+      }
+      return list;
+    } catch (err) {
+      console.error("Failed to refresh exercices:", err);
+      return [];
+    }
+  };
+
+  const selectExercice = (exercice) => {
+    setSelectedExercice(exercice);
+    const activeTenantId = auth?.selectedTenant?.id;
+    if (activeTenantId && exercice) {
+      localStorage.setItem(`fs_exercice_${activeTenantId}`, JSON.stringify(exercice));
+    }
+  };
+
+  // Auto-refresh fiscal years when tenant switches
+  useEffect(() => {
+    if (auth?.selectedTenant?.id) {
+      refreshExercices(auth.selectedTenant.id);
+    } else {
+      setExercices([]);
+      setSelectedExercice(null);
+    }
+  }, [auth?.selectedTenant?.id]);
 
   const login = async (payload) => {
     const data = await authApi.login(payload);
@@ -80,6 +139,8 @@ export function AuthProvider({ children }) {
     } finally {
       authStorage.clearAuth();
       setAuth(null);
+      setExercices([]);
+      setSelectedExercice(null);
     }
   };
 
@@ -100,6 +161,9 @@ export function AuthProvider({ children }) {
 
       authStorage.saveAuth(updated);
       setAuth(updated);
+      
+      // Fetch new workspace fiscal years
+      await refreshExercices(tenant.id);
     } catch (err) {
       console.error("Failed to switch tenant:", err);
     }
@@ -135,8 +199,21 @@ export function AuthProvider({ children }) {
   };
 
   const value = useMemo(
-    () => ({ auth, isAuthenticated, login, register, logout, selectTenant, refreshUser, refreshTenants }),
-    [auth, isAuthenticated]
+    () => ({
+      auth,
+      isAuthenticated,
+      login,
+      register,
+      logout,
+      selectTenant,
+      refreshUser,
+      refreshTenants,
+      exercices,
+      selectedExercice,
+      selectExercice,
+      refreshExercices
+    }),
+    [auth, isAuthenticated, exercices, selectedExercice]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
