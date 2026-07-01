@@ -81,7 +81,7 @@ export function AuthProvider({ children }) {
 
   const login = async (payload) => {
     const data = await authApi.login(payload);
-    const savedAuth = authStorage.saveAuth(buildAuthSession(data));
+    const savedAuth = authStorage.saveAuth(buildAuthSession(data), payload.remember);
 
     try {
       const [userInfo, tenantsResponse] = await Promise.all([authApi.getMe(), authApi.getTenants()]);

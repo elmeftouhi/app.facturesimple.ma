@@ -92,7 +92,7 @@ function Login() {
       {/* Animated Top Viewport Alert */}
       {notificationState !== "hidden" && (
         <div
-          className={`fixed top-6 left-1/2 z-[10000] w-full max-w-md px-4 ${
+          className={`fixed top-6 left-1/2 z-[10000] w-full max-w-md px-4 -translate-x-1/2 ${
             notificationState === "entering" ? "animate-alert-enter" : "animate-alert-exit"
           }`}
         >
@@ -104,17 +104,16 @@ function Login() {
       )}
 
       <AuthForm
-        title="Login"
+        title="Welcome Back"
         fields={loginFields}
-        submitText="Sign in"
-        footerText="Enter your email and password to access your account."
+        submitText="Sign in to account"
         onSubmit={handleLogin}
         errors={validationErrors}
+        submitting={status !== ""}
       />
-      <p className="mt-4 text-sm text-slate-500">
-        No account yet? <Link className="font-semibold text-sky-600" to="/register">Create one</Link>
+      <p className="mt-5 text-center text-sm text-slate-500">
+        No account yet? <Link className="font-semibold text-sky-600 hover:text-sky-700 hover:underline transition" to="/register">Create one</Link>
       </p>
-      {status ? <p className="mt-3 text-sm text-emerald-600">{status}</p> : null}
     </div>
   );
 }

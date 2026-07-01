@@ -29,8 +29,14 @@ function normalizeExpiry(data) {
   return null;
 }
 
-export function saveAuth(data) {
-    console.log("Saving auth data:", data); // Debugging line
+export function saveAuth(data, remember) {
+  let useSession = false;
+  if (remember !== undefined) {
+    useSession = !remember;
+  } else {
+    useSession = sessionStorage.getItem(AUTH_STORAGE_KEY) !== null;
+  }
+
   const token = data?.token || data?.accessToken || data?.idToken || data?.jwt || data?.authToken;
   if (!token) {
     throw new Error("Missing auth token in response.");
@@ -45,12 +51,21 @@ export function saveAuth(data) {
     selectedTenant: data?.selectedTenant || null
   };
 
-  localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(payload));
+  if (useSession) {
+    sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(payload));
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+  } else {
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(payload));
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
+  }
   return payload;
 }
 
 export function getAuth() {
-  const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+  let raw = sessionStorage.getItem(AUTH_STORAGE_KEY);
+  if (!raw) {
+    raw = localStorage.getItem(AUTH_STORAGE_KEY);
+  }
   if (!raw) {
     return null;
   }
@@ -58,17 +73,20 @@ export function getAuth() {
   try {
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") {
+      sessionStorage.removeItem(AUTH_STORAGE_KEY);
       localStorage.removeItem(AUTH_STORAGE_KEY);
       return null;
     }
     return parsed;
   } catch {
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
     localStorage.removeItem(AUTH_STORAGE_KEY);
     return null;
   }
 }
 
 export function clearAuth() {
+  sessionStorage.removeItem(AUTH_STORAGE_KEY);
   localStorage.removeItem(AUTH_STORAGE_KEY);
 }
 
