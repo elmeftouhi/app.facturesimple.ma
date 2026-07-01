@@ -82,8 +82,8 @@ function AuthForm({ title, fields, submitText, footerText, onSubmit, errors = {}
           }
 
           return (
-            <div key={field.name} className="space-y-1">
-              <label className="block text-xxs font-bold uppercase tracking-wider text-slate-400" htmlFor={field.name}>
+            <div key={field.name} className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-500" htmlFor={field.name}>
                 {field.label}
               </label>
               <div className="relative flex items-center">
@@ -100,9 +100,9 @@ function AuthForm({ title, fields, submitText, footerText, onSubmit, errors = {}
                   value={values[field.name]}
                   onChange={handleChange}
                   disabled={submitting}
-                  className={`w-full rounded-2xl border bg-slate-50 py-3.5 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/10 ${
-                    hasIcon ? "pl-11" : "px-4"
-                  } ${isPassword ? "pr-11" : "pr-4"} ${
+                  className={`w-full rounded-2xl border bg-slate-50 py-4 text-base text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/10 ${
+                    hasIcon ? "pl-12" : "px-4"
+                  } ${isPassword ? "pr-12" : "pr-4"} ${
                     errors[field.name]
                       ? "border-rose-300 focus:border-rose-400 focus:ring-rose-500/10"
                       : "border-slate-200"
@@ -127,7 +127,7 @@ function AuthForm({ title, fields, submitText, footerText, onSubmit, errors = {}
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-2xl bg-sky-600 px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-sky-700 transition disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+          className="w-full rounded-2xl bg-sky-600 px-5 py-4 text-sm font-semibold tracking-wide text-white shadow-sm hover:bg-sky-700 transition disabled:opacity-50 flex items-center justify-center gap-2 mt-3"
         >
           {submitting && <FontAwesomeIcon icon={faSpinner} className="animate-spin h-3.5 w-3.5" />}
           <span>{submitText}</span>

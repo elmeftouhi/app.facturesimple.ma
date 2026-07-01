@@ -112,7 +112,7 @@ function AuthLayout({ children }) {
 
       {/* Right Side: Form Canvas */}
       <div className="flex w-full lg:w-1/2 flex-col justify-center px-6 py-12 md:px-16 lg:px-20 bg-slate-50">
-        <div className="mx-auto w-full max-w-md space-y-6">
+        <div className="mx-auto w-full max-w-lg space-y-6">
           {/* Mobile Header (hidden on large desktop) */}
           <div className="flex items-center gap-2 lg:hidden mb-6">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-600 text-white shadow-md">
