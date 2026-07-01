@@ -9,13 +9,18 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "subtitle": "Overview of your company invoices and payments.",
+    "subtitle": "Welcome to your billing overview sheet.",
     "total_invoiced": "Total Invoiced",
     "collected": "Collected",
     "balance_due": "Balance Due",
     "paid_invoices": "Paid Invoices",
     "recent_invoices": "Recent Invoices",
-    "view_all": "View All"
+    "view_all": "View All",
+    "active_clients": "Active Clients",
+    "no_invoices": "No invoices recorded yet.",
+    "quick_actions": "Billing Quick Actions",
+    "create_desc": "Create draft or final invoices",
+    "search_desc": "Search and filter statements"
   },
   "invoice": {
     "title": "Invoices",

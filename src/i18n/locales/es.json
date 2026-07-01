@@ -9,13 +9,18 @@
   },
   "dashboard": {
     "title": "Tablero de Control",
-    "subtitle": "Resumen de las facturas y pagos de su empresa.",
+    "subtitle": "Bienvenido a su hoja de resumen de facturación.",
     "total_invoiced": "Total Facturado",
     "collected": "Cobrado",
     "balance_due": "Saldo Pendiente",
     "paid_invoices": "Facturas Pagadas",
     "recent_invoices": "Facturas Recientes",
-    "view_all": "Ver Todo"
+    "view_all": "Ver Todo",
+    "active_clients": "Clientes Activos",
+    "no_invoices": "No hay facturas registradas todavía.",
+    "quick_actions": "Acciones Rápidas",
+    "create_desc": "Crear facturas en borrador o definitivas",
+    "search_desc": "Buscar y filtrar declaraciones"
   },
   "invoice": {
     "title": "Facturas",

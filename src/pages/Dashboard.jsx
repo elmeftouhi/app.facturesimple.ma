@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFileInvoice,
@@ -15,6 +16,7 @@ import { formatCurrency } from "../utils";
 import { useAuth } from "../context/AuthContext";
 
 function Dashboard() {
+  const { t } = useTranslation();
   const { selectedExercice } = useAuth();
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -91,8 +93,8 @@ function Dashboard() {
       {/* Welcome Block */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Dashboard</h1>
-          <p className="text-sm text-slate-500">Welcome to your billing overview sheet.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">{t("dashboard.title")}</h1>
+          <p className="text-sm text-slate-500">{t("dashboard.subtitle")}</p>
         </div>
 
         <div className="flex gap-2">
@@ -101,7 +103,7 @@ function Dashboard() {
             className="inline-flex items-center gap-2 rounded-2xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700"
           >
             <FontAwesomeIcon icon={faPlus} className="h-3.5 w-3.5" />
-            <span>Create Invoice</span>
+            <span>{t("invoice.new_invoice")}</span>
           </Link>
         </div>
       </div>
@@ -117,7 +119,7 @@ function Dashboard() {
         <div className="grid gap-5 sm:grid-cols-4">
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Revenue</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">{t("dashboard.total_invoiced")}</span>
               <FontAwesomeIcon icon={faCreditCard} className="text-slate-300 h-4.5 w-4.5" />
             </div>
             <div className="mt-4 text-2xl font-bold text-slate-900">{formatCurrency(metrics.totalInvoiced)}</div>
@@ -125,7 +127,7 @@ function Dashboard() {
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Collected</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">{t("dashboard.collected")}</span>
               <FontAwesomeIcon icon={faCreditCard} className="text-emerald-300 h-4.5 w-4.5" />
             </div>
             <div className="mt-4 text-2xl font-bold text-emerald-600">{formatCurrency(metrics.totalPaid)}</div>
@@ -133,7 +135,7 @@ function Dashboard() {
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-rose-400">Outstanding</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-rose-400">{t("dashboard.balance_due")}</span>
               <FontAwesomeIcon icon={faCreditCard} className="text-rose-300 h-4.5 w-4.5" />
             </div>
             <div className="mt-4 text-2xl font-bold text-rose-600">{formatCurrency(metrics.totalOutstanding)}</div>
@@ -141,7 +143,7 @@ function Dashboard() {
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Active Clients</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">{t("dashboard.active_clients")}</span>
               <FontAwesomeIcon icon={faUserFriends} className="text-slate-300 h-4.5 w-4.5" />
             </div>
             <div className="mt-4 text-2xl font-bold text-slate-900">{customerCount}</div>
@@ -154,12 +156,12 @@ function Dashboard() {
         {/* Left Side: Recent Invoices */}
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900">Recent Invoices</h2>
+            <h2 className="text-lg font-bold text-slate-900">{t("dashboard.recent_invoices")}</h2>
             <Link
               to="/invoices"
               className="group flex items-center gap-1 text-xs font-semibold text-sky-600 hover:text-sky-700"
             >
-              <span>View All</span>
+              <span>{t("dashboard.view_all")}</span>
               <FontAwesomeIcon icon={faArrowRight} className="h-3 w-3 transition group-hover:translate-x-0.5" />
             </Link>
           </div>
@@ -171,17 +173,17 @@ function Dashboard() {
           ) : invoices.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-slate-400 text-center">
               <FontAwesomeIcon icon={faFileInvoice} className="h-10 w-10 text-slate-200" />
-              <p className="mt-3 text-sm">No invoices recorded yet.</p>
+              <p className="mt-3 text-sm">{t("dashboard.no_invoices")}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-slate-100 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                    <th className="pb-2">Invoice #</th>
-                    <th className="pb-2">Client</th>
-                    <th className="pb-2 text-right">Amount</th>
-                    <th className="pb-2 text-center">Status</th>
+                    <th className="pb-2">{t("invoice.number")}</th>
+                    <th className="pb-2">{t("invoice.client")}</th>
+                    <th className="pb-2 text-right">{t("invoice.amount")}</th>
+                    <th className="pb-2 text-center">{t("invoice.status")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -213,7 +215,7 @@ function Dashboard() {
 
         {/* Right Side: Quick Actions & Help */}
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-slate-900">Billing Quick Actions</h2>
+          <h2 className="text-lg font-bold text-slate-900">{t("dashboard.quick_actions")}</h2>
           <div className="grid gap-3">
             <Link
               to="/invoices/new"
@@ -223,8 +225,8 @@ function Dashboard() {
                 <FontAwesomeIcon icon={faPlus} className="h-4 w-4" />
               </div>
               <div>
-                <div className="text-sm font-semibold text-slate-900">Add New Invoice</div>
-                <div className="text-xs text-slate-400">Create draft or final invoices</div>
+                <div className="text-sm font-semibold text-slate-900">{t("invoice.new_invoice")}</div>
+                <div className="text-xs text-slate-400">{t("dashboard.create_desc")}</div>
               </div>
             </Link>
 
@@ -236,8 +238,8 @@ function Dashboard() {
                 <FontAwesomeIcon icon={faFileInvoice} className="h-4 w-4" />
               </div>
               <div>
-                <div className="text-sm font-semibold text-slate-900">Invoices List</div>
-                <div className="text-xs text-slate-400">Search and filter statements</div>
+                <div className="text-sm font-semibold text-slate-900">{t("sidebar.invoices")}</div>
+                <div className="text-xs text-slate-400">{t("dashboard.search_desc")}</div>
               </div>
             </Link>
           </div>

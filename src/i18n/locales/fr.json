@@ -9,13 +9,18 @@
   },
   "dashboard": {
     "title": "Tableau de Bord",
-    "subtitle": "Aperçu de vos factures d'entreprise et paiements.",
+    "subtitle": "Bienvenue sur votre fiche récapitulative de facturation.",
     "total_invoiced": "Total Facturé",
     "collected": "Encaissé",
     "balance_due": "Solde Dû",
     "paid_invoices": "Factures Payées",
     "recent_invoices": "Factures Récentes",
-    "view_all": "Voir Tout"
+    "view_all": "Voir Tout",
+    "active_clients": "Clients Actifs",
+    "no_invoices": "Aucune facture enregistrée pour le moment.",
+    "quick_actions": "Actions Rapides",
+    "create_desc": "Créer des factures brouillons ou finales",
+    "search_desc": "Rechercher et filtrer les relevés"
   },
   "invoice": {
     "title": "Factures",

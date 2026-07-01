@@ -9,13 +9,18 @@
   },
   "dashboard": {
     "title": "لوحة التحكم",
-    "subtitle": "نظرة عامة على فواتير شركتك ومدفوعاتها.",
+    "subtitle": "مرحباً بك في صفحة ملخص الفواتير الخاصة بك.",
     "total_invoiced": "إجمالي الفواتير",
     "collected": "المحصل",
     "balance_due": "المستحق",
     "paid_invoices": "الفواتير المدفوعة",
     "recent_invoices": "الفواتير الأخيرة",
-    "view_all": "عرض الكل"
+    "view_all": "عرض الكل",
+    "active_clients": "العملاء النشطون",
+    "no_invoices": "لم يتم تسجيل أي فواتير بعد.",
+    "quick_actions": "إجراءات سريعة",
+    "create_desc": "إنشاء فواتير مسودة أو نهائية",
+    "search_desc": "البحث وتصفية البيانات"
   },
   "invoice": {
     "title": "الفواتير",
