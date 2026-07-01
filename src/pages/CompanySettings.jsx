@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import i18n from "../i18n/i18n";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuilding,
@@ -52,6 +53,7 @@ function CompanySettings() {
     logo: "",
     website: "",
     currency: "MAD",
+    language: "fr",
     defaultVatRate: "20.00",
     paymentTermsInDays: 30,
     description: ""
@@ -90,6 +92,7 @@ function CompanySettings() {
           logo: data.logo || "",
           website: data.website || "",
           currency: data.currency || "MAD",
+          language: data.language || "fr",
           defaultVatRate: data.defaultVatRate ? data.defaultVatRate.toString() : "20.00",
           paymentTermsInDays: data.paymentTermsInDays ?? 30,
           description: data.description || ""
@@ -126,6 +129,7 @@ function CompanySettings() {
         logo: companyForm.logo.trim() || undefined,
         website: companyForm.website.trim() || undefined,
         currency: companyForm.currency,
+        language: companyForm.language,
         defaultVatRate: Number(companyForm.defaultVatRate) || 0,
         paymentTermsInDays: Number(companyForm.paymentTermsInDays) || 30,
         description: companyForm.description.trim() || undefined
@@ -143,6 +147,9 @@ function CompanySettings() {
 
       if (updatedCompany) {
         setBanksList(updatedCompany.banks || []);
+        if (updatedCompany.language) {
+          i18n.changeLanguage(updatedCompany.language.toLowerCase());
+        }
       }
     } catch (err) {
       setError(err.message || "Failed to save company settings.");
@@ -400,7 +407,7 @@ function CompanySettings() {
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
             <h2 className="text-lg font-bold text-slate-900">Billing Preferences</h2>
 
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div>
                 <label className="mb-1.5 block text-xs font-semibold text-slate-500">Currency *</label>
                 <select
@@ -413,6 +420,20 @@ function CompanySettings() {
                       {c.label}
                     </option>
                   ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-slate-500">System Language *</label>
+                <select
+                  value={companyForm.language}
+                  onChange={(e) => setCompanyForm({ ...companyForm, language: e.target.value })}
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
+                >
+                  <option value="fr">Français (French)</option>
+                  <option value="en">English (English)</option>
+                  <option value="es">Español (Spanish)</option>
+                  <option value="ar">العربية (Arabic)</option>
                 </select>
               </div>
 

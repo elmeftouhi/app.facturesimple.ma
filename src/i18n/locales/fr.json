@@ -1,0 +1,57 @@
+{
+  "sidebar": {
+    "dashboard": "Tableau de Bord",
+    "invoices": "Factures",
+    "clients": "Clients",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "logout": "Déconnexion"
+  },
+  "dashboard": {
+    "title": "Tableau de Bord",
+    "subtitle": "Aperçu de vos factures d'entreprise et paiements.",
+    "total_invoiced": "Total Facturé",
+    "collected": "Encaissé",
+    "balance_due": "Solde Dû",
+    "paid_invoices": "Factures Payées",
+    "recent_invoices": "Factures Récentes",
+    "view_all": "Voir Tout"
+  },
+  "invoice": {
+    "title": "Factures",
+    "new_invoice": "Nouvelle Facture",
+    "number": "N° Facture",
+    "client": "Client",
+    "date": "Date d'Émission",
+    "due_date": "Date d'Échéance",
+    "amount": "Montant",
+    "status": "Statut",
+    "actions": "Actions",
+    "details": "Détails de la Facture",
+    "subtotal": "Sous-total",
+    "vat": "TVA",
+    "total": "Total",
+    "collected_amount": "Encaissé",
+    "remaining": "Solde Dû",
+    "memo": "Mémo / Notes",
+    "item_ref": "Article / Référence",
+    "qty": "Qté",
+    "price": "Prix Unitaire",
+    "line_total": "Total Ligne",
+    "print": "Imprimer la Facture",
+    "record_payment": "Enregistrer un Paiement",
+    "manage_status": "Gérer le Statut",
+    "audit_history": "Historique d'Audit",
+    "payments_history": "Historique des Paiements"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "add": "Ajouter",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "loading": "Chargement...",
+    "success": "Succès",
+    "error": "Erreur"
+  }
+}

@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChartLine,
@@ -10,14 +11,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const NAV_ITEMS = [
-  { path: "/dashboard", label: "Dashboard", icon: faChartLine },
-  { path: "/invoices", label: "Invoices", icon: faFileInvoice },
-  { path: "/clients", label: "Clients", icon: faUserFriends },
-  { path: "/settings", label: "Settings", icon: faCog }
+  { path: "/dashboard", label: "Dashboard", i18nKey: "sidebar.dashboard", icon: faChartLine },
+  { path: "/invoices", label: "Invoices", i18nKey: "sidebar.invoices", icon: faFileInvoice },
+  { path: "/clients", label: "Clients", i18nKey: "sidebar.clients", icon: faUserFriends },
+  { path: "/settings", label: "Settings", i18nKey: "sidebar.settings", icon: faCog }
 ];
 
 function Sidebar({ open, onClose }) {
   const location = useLocation();
+  const { t } = useTranslation();
 
   const isActive = (path) => {
     if (path === "/dashboard") {
@@ -95,7 +97,7 @@ function Sidebar({ open, onClose }) {
                 }`}
               >
                 <FontAwesomeIcon icon={item.icon} className={`h-4 w-4 ${active ? "text-sky-600" : ""}`} />
-                <span>{item.label}</span>
+                <span>{t(item.i18nKey || item.label)}</span>
               </Link>
             );
           })}

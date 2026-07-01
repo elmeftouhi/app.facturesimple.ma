@@ -1,0 +1,57 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "invoices": "Invoices",
+    "clients": "Clients",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Log Out"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of your company invoices and payments.",
+    "total_invoiced": "Total Invoiced",
+    "collected": "Collected",
+    "balance_due": "Balance Due",
+    "paid_invoices": "Paid Invoices",
+    "recent_invoices": "Recent Invoices",
+    "view_all": "View All"
+  },
+  "invoice": {
+    "title": "Invoices",
+    "new_invoice": "New Invoice",
+    "number": "Invoice No.",
+    "client": "Client",
+    "date": "Issue Date",
+    "due_date": "Due Date",
+    "amount": "Amount",
+    "status": "Status",
+    "actions": "Actions",
+    "details": "Invoice Details",
+    "subtotal": "Subtotal",
+    "vat": "VAT",
+    "total": "Total",
+    "collected_amount": "Collected",
+    "remaining": "Balance Due",
+    "memo": "Memo / Notes",
+    "item_ref": "Item / Reference",
+    "qty": "Qty",
+    "price": "Unit Price",
+    "line_total": "Line Total",
+    "print": "Print Invoice",
+    "record_payment": "Record Payment",
+    "manage_status": "Manage Status",
+    "audit_history": "Audit History",
+    "payments_history": "Payment History"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "add": "Add",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "success": "Success",
+    "error": "Error"
+  }
+}

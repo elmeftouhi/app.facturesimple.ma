@@ -1,0 +1,57 @@
+{
+  "sidebar": {
+    "dashboard": "لوحة التحكم",
+    "invoices": "الفواتير",
+    "clients": "العملاء",
+    "settings": "الإعدادات",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج"
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "subtitle": "نظرة عامة على فواتير شركتك ومدفوعاتها.",
+    "total_invoiced": "إجمالي الفواتير",
+    "collected": "المحصل",
+    "balance_due": "المستحق",
+    "paid_invoices": "الفواتير المدفوعة",
+    "recent_invoices": "الفواتير الأخيرة",
+    "view_all": "عرض الكل"
+  },
+  "invoice": {
+    "title": "الفواتير",
+    "new_invoice": "فاتورة جديدة",
+    "number": "رقم الفاتورة",
+    "client": "العميل",
+    "date": "تاريخ الإصدار",
+    "due_date": "تاريخ الاستحقاق",
+    "amount": "المبلغ",
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "details": "تفاصيل الفاتورة",
+    "subtotal": "المجموع الفرعي",
+    "vat": "الضريبة",
+    "total": "الإجمالي",
+    "collected_amount": "المحصل",
+    "remaining": "المستحق",
+    "memo": "ملاحظات",
+    "item_ref": "البند / المرجع",
+    "qty": "الكمية",
+    "price": "سعر الوحدة",
+    "line_total": "الإجمالي",
+    "print": "طباعة الفاتورة",
+    "record_payment": "تسجيل دفعة",
+    "manage_status": "إدارة الحالة",
+    "audit_history": "سجل المراجعة",
+    "payments_history": "سجل المدفوعات"
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "add": "إضافة",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "loading": "جاري التحميل...",
+    "success": "نجاح",
+    "error": "خطأ"
+  }
+}

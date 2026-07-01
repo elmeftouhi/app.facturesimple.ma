@@ -1,0 +1,57 @@
+{
+  "sidebar": {
+    "dashboard": "Tablero de Control",
+    "invoices": "Facturas",
+    "clients": "Clientes",
+    "settings": "Configuración",
+    "profile": "Perfil",
+    "logout": "Cerrar Sesión"
+  },
+  "dashboard": {
+    "title": "Tablero de Control",
+    "subtitle": "Resumen de las facturas y pagos de su empresa.",
+    "total_invoiced": "Total Facturado",
+    "collected": "Cobrado",
+    "balance_due": "Saldo Pendiente",
+    "paid_invoices": "Facturas Pagadas",
+    "recent_invoices": "Facturas Recientes",
+    "view_all": "Ver Todo"
+  },
+  "invoice": {
+    "title": "Facturas",
+    "new_invoice": "Nueva Factura",
+    "number": "N° Factura",
+    "client": "Cliente",
+    "date": "Fecha de Emisión",
+    "due_date": "Fecha de Vencimiento",
+    "amount": "Monto",
+    "status": "Estado",
+    "actions": "Acciones",
+    "details": "Detalles de la Factura",
+    "subtotal": "Subtotal",
+    "vat": "IVA",
+    "total": "Total",
+    "collected_amount": "Cobrado",
+    "remaining": "Saldo Pendiente",
+    "memo": "Memo / Notas",
+    "item_ref": "Artículo / Referencia",
+    "qty": "Cant.",
+    "price": "Precio Unitario",
+    "line_total": "Total Línea",
+    "print": "Imprimir Factura",
+    "record_payment": "Registrar Pago",
+    "manage_status": "Gestionar Estado",
+    "audit_history": "Historial de Auditoría",
+    "payments_history": "Historial de Pagos"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "add": "Añadir",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando...",
+    "success": "Éxito",
+    "error": "Error"
+  }
+}
