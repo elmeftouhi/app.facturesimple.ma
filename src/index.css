@@ -44,6 +44,12 @@ body {
     border: none !important;
     box-shadow: none !important;
   }
+
+  /* Force exact background colors and text contrast when printing */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }
 
 @keyframes slide-down-fade {

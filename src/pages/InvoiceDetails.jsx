@@ -313,6 +313,17 @@ function InvoiceDetails() {
 
                 {/* Company Details */}
                 <div className={`text-left md:text-right text-sm space-y-1 ${isClassic ? "text-slate-200" : "text-slate-800"}`}>
+                  {invoice.company?.logo && (
+                    <div className="mb-2 md:flex md:justify-end">
+                      <img
+                        src={invoice.company.logo}
+                        alt={`${invoice.company.name} Logo`}
+                        className={`h-12 w-auto object-contain ${
+                          isClassic ? "bg-white p-1.5 rounded-lg shadow-sm" : ""
+                        }`}
+                      />
+                    </div>
+                  )}
                   <div className={`font-bold ${isClassic ? "text-white" : "text-slate-900"}`}>
                     {invoice.company?.name || "Facture Simple Tenant"}
                   </div>
