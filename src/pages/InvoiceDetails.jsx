@@ -46,6 +46,9 @@ function InvoiceDetails() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [recordingPayment, setRecordingPayment] = useState(false);
   const [deletingPaymentId, setDeletingPaymentId] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState(() => {
+    return localStorage.getItem("facture-simple-default-template") || "modern";
+  });
 
   // Payment form state
   const [paymentForm, setPaymentForm] = useState({
@@ -246,123 +249,209 @@ function InvoiceDetails() {
         {/* Printable Invoice Details */}
         <div className="lg:col-span-2 space-y-6 print:w-full print:border-none print:shadow-none">
           {/* Main Invoice Bill Sheet */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm space-y-8 print:p-0 print:border-none print:shadow-none">
-            {/* Top Identity Block */}
-            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between border-b border-slate-100 pb-8">
-              <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-sky-600">Invoice Statement</span>
-                <h2 className="mt-1 text-3xl font-black text-slate-900">{invoice.formattedNumber || `#${invoice.invoiceNumber}`}</h2>
-                <div className="mt-4 flex items-center gap-2 print:mt-2">
-                  <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${getStatusColor(invoice.status)}`}>
-                    {invoice.status}
-                  </span>
-                  <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-bold ${getPaymentStatusColor(invoice.paymentStatus)}`}>
-                    {invoice.paymentStatus}
-                  </span>
-                </div>
-              </div>
-
-              {/* Company Details */}
-              <div className="text-left md:text-right text-sm space-y-1">
-                <div className="font-bold text-slate-900">{invoice.company?.name || "Facture Simple Tenant"}</div>
-                {invoice.company?.email && <div className="text-slate-500">{invoice.company.email}</div>}
-                {invoice.company?.phone && <div className="text-slate-500">{invoice.company.phone}</div>}
-                {invoice.company?.address && <div className="text-slate-500 max-w-xs md:ml-auto">{invoice.company.address}</div>}
-              </div>
-            </div>
-
-            {/* Bill Info Block */}
-            <div className="grid gap-6 sm:grid-cols-2 text-sm">
-              {/* Customer */}
-              <div className="rounded-2xl border border-slate-100 p-4">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Bill To</span>
-                <div className="mt-2 font-bold text-slate-900">{invoice.customer?.name || "Inline Customer"}</div>
-                {invoice.customer?.email && <div className="mt-1 text-slate-500">{invoice.customer.email}</div>}
-                {invoice.customer?.phone && <div className="text-slate-500">{invoice.customer.phone}</div>}
-                {invoice.customer?.address && <div className="mt-2 text-slate-500 whitespace-pre-line">{invoice.customer.address}</div>}
-                {invoice.customer?.taxId && <div className="mt-2 text-xs font-semibold text-slate-500">ICE / Tax ID: {invoice.customer.taxId}</div>}
-              </div>
-
-              {/* Invoice Meta */}
-              <div className="rounded-2xl border border-slate-100 p-4 space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Issue Date:</span>
-                  <span className="font-semibold text-slate-800">{invoice.invoiceDate}</span>
-                </div>
-                {invoice.dueDate && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Due Date:</span>
-                    <span className="font-semibold text-slate-800">{invoice.dueDate}</span>
-                  </div>
-                )}
-                {invoice.description && (
-                  <div className="border-t border-slate-100 pt-3">
-                    <span className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Memo / Notes</span>
-                    <p className="mt-1 text-xs text-slate-600">{invoice.description}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Line Items Table */}
-            <div>
-              <table className="w-full border-collapse text-left text-sm">
-                <thead>
-                  <tr className="border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                    <th className="pb-3 pr-4">Item / Description</th>
-                    <th className="pb-3 pr-4 text-center">Qty</th>
-                    <th className="pb-3 pr-4 text-right">Unit Price</th>
-                    <th className="pb-3 text-right">Line Total</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {(invoice.lineItems || []).map((item, index) => {
-                    const qty = Number(item.quantity) || 0;
-                    const price = Number(item.unitPrice) || 0;
-                    const total = qty * price;
-
-                    return (
-                      <tr key={item.id || index}>
-                        <td className="py-4 pr-4">
-                          <div className="font-semibold text-slate-800">{item.itemReference}</div>
-                          {item.itemDescription && <div className="text-xs text-slate-400 mt-0.5">{item.itemDescription}</div>}
-                        </td>
-                        <td className="py-4 pr-4 text-center text-slate-700">{qty}</td>
-                        <td className="py-4 pr-4 text-right text-slate-700">{formatCurrency(price)}</td>
-                        <td className="py-4 text-right font-semibold text-slate-800">{formatCurrency(total)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Calculations and Balances */}
-            <div className="flex flex-col items-end border-t border-slate-100 pt-6">
-              <div className="w-full max-w-sm text-sm space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Subtotal:</span>
-                  <span className="font-semibold text-slate-800">{formatCurrency(subtotal)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">VAT ({invoice.vatRate}%):</span>
-                  <span className="font-semibold text-slate-800">{formatCurrency(vatAmount)}</span>
-                </div>
-                <div className="flex justify-between border-t border-slate-100 pt-3 text-base font-bold">
-                  <span className="text-slate-900">Total:</span>
-                  <span className="text-sky-600">{formatCurrency(invoiceTotal)}</span>
-                </div>
-                <div className="flex justify-between text-xs text-slate-500">
-                  <span>Collected:</span>
-                  <span>{formatCurrency(Number(invoice.paidAmount) || 0)}</span>
-                </div>
-                <div className="flex justify-between border-t border-dashed border-slate-100 pt-2 text-sm font-bold text-rose-600">
-                  <span>Balance Due:</span>
-                  <span>{formatCurrency(Number(invoice.remainingAmount) || 0)}</span>
-                </div>
-              </div>
-            </div>
+        {/* Template Switcher Bar */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-slate-200 bg-white p-4 shadow-sm print:hidden">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Template Layout:</span>
+            <select
+              value={selectedTemplate}
+              onChange={(e) => setSelectedTemplate(e.target.value)}
+              className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:border-sky-500"
+            >
+              <option value="modern">Modern Minimalist</option>
+              <option value="classic">Professional B2B (Classic Grid)</option>
+              <option value="elegant">Elegant Editorial (Serif Style)</option>
+            </select>
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              localStorage.setItem("facture-simple-default-template", selectedTemplate);
+              alert(`"${selectedTemplate.toUpperCase()}" template set as default layout!`);
+            }}
+            className="text-xxs font-bold uppercase tracking-wider text-sky-600 hover:text-sky-700 transition px-3 py-1.5 rounded-xl hover:bg-sky-50 border border-transparent hover:border-sky-100"
+          >
+            Set as default
+          </button>
+        </div>
+
+        {(() => {
+          const isClassic = selectedTemplate === "classic";
+          const isElegant = selectedTemplate === "elegant";
+          const isModern = selectedTemplate === "modern";
+
+          return (
+            <div className={`rounded-3xl border border-slate-200 bg-white p-8 shadow-sm space-y-8 print:p-0 print:border-none print:shadow-none ${
+              isElegant ? "font-serif text-slate-900" : "font-sans text-slate-800"
+            }`}>
+              {/* Top Identity Block */}
+              <div className={`flex flex-col gap-6 md:flex-row md:items-start md:justify-between border-b ${
+                isClassic
+                  ? "bg-slate-800 text-white p-6 -mx-8 -mt-8 rounded-t-3xl border-slate-700 pb-6"
+                  : isElegant
+                  ? "border-double border-b-4 border-slate-200 pb-8"
+                  : "border-slate-100 pb-8"
+              }`}>
+                <div>
+                  <span className={`text-xs font-semibold uppercase tracking-wider ${
+                    isClassic ? "text-slate-300" : isElegant ? "text-slate-500 italic" : "text-sky-600"
+                  }`}>
+                    Invoice Statement
+                  </span>
+                  <h2 className={`mt-1 text-3xl font-black ${isClassic ? "text-white" : "text-slate-900"}`}>
+                    {invoice.formattedNumber || `#${invoice.invoiceNumber}`}
+                  </h2>
+                  <div className="mt-4 flex items-center gap-2 print:mt-2">
+                    <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${getStatusColor(invoice.status)}`}>
+                      {invoice.status}
+                    </span>
+                    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-bold ${getPaymentStatusColor(invoice.paymentStatus)}`}>
+                      {invoice.paymentStatus}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Company Details */}
+                <div className={`text-left md:text-right text-sm space-y-1 ${isClassic ? "text-slate-200" : "text-slate-800"}`}>
+                  <div className={`font-bold ${isClassic ? "text-white" : "text-slate-900"}`}>
+                    {invoice.company?.name || "Facture Simple Tenant"}
+                  </div>
+                  {invoice.company?.email && <div className={isClassic ? "text-slate-300" : "text-slate-500"}>{invoice.company.email}</div>}
+                  {invoice.company?.phone && <div className={isClassic ? "text-slate-300" : "text-slate-500"}>{invoice.company.phone}</div>}
+                  {invoice.company?.address && (
+                    <div className={`max-w-xs md:ml-auto ${isClassic ? "text-slate-300" : "text-slate-500"}`}>
+                      {invoice.company.address}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Bill Info Block */}
+              <div className="grid gap-6 sm:grid-cols-2 text-sm">
+                {/* Customer */}
+                <div className={`${
+                  isClassic
+                    ? "rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-xs"
+                    : isElegant
+                    ? "border-b border-slate-100 pb-4"
+                    : "rounded-2xl border border-slate-100 p-4"
+                }`}>
+                  <span className={`text-xs font-semibold uppercase tracking-wider ${isElegant ? "text-slate-400 italic" : "text-slate-400"}`}>
+                    Bill To
+                  </span>
+                  <div className="mt-2 font-bold text-slate-900">{invoice.customer?.name || "Inline Customer"}</div>
+                  {invoice.customer?.email && <div className="mt-1 text-slate-500">{invoice.customer.email}</div>}
+                  {invoice.customer?.phone && <div className="text-slate-500">{invoice.customer.phone}</div>}
+                  {invoice.customer?.address && <div className="mt-2 text-slate-500 whitespace-pre-line">{invoice.customer.address}</div>}
+                  {invoice.customer?.taxId && <div className="mt-2 text-xs font-semibold text-slate-500">ICE / Tax ID: {invoice.customer.taxId}</div>}
+                </div>
+
+                {/* Invoice Meta */}
+                <div className={`${
+                  isClassic
+                    ? "rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-xs space-y-3"
+                    : isElegant
+                    ? "border-b border-slate-100 pb-4 space-y-3"
+                    : "rounded-2xl border border-slate-100 p-4 space-y-3"
+                }`}>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Issue Date:</span>
+                    <span className="font-semibold text-slate-800">{invoice.invoiceDate}</span>
+                  </div>
+                  {invoice.dueDate && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Due Date:</span>
+                      <span className="font-semibold text-slate-800">{invoice.dueDate}</span>
+                    </div>
+                  )}
+                  {invoice.description && (
+                    <div className={`pt-3 ${isElegant ? "border-t border-dashed border-slate-200" : "border-t border-slate-100"}`}>
+                      <span className={`block text-xs font-semibold uppercase tracking-wider ${isElegant ? "text-slate-400 italic" : "text-slate-400"}`}>
+                        Memo / Notes
+                      </span>
+                      <p className="mt-1 text-xs text-slate-600 whitespace-pre-wrap">{invoice.description}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Line Items Table */}
+              <div>
+                <table className="w-full border-collapse text-left text-sm">
+                  <thead>
+                    <tr className={`text-xs font-semibold uppercase tracking-wider text-slate-400 ${
+                      isClassic
+                        ? "border border-slate-200 bg-slate-100 text-slate-700"
+                        : isElegant
+                        ? "border-t-2 border-b-2 border-double border-slate-300 text-slate-600"
+                        : "border-b border-slate-200"
+                    }`}>
+                      <th className={`pb-3 pr-4 ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>Item / Description</th>
+                      <th className={`pb-3 pr-4 text-center ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>Qty</th>
+                      <th className={`pb-3 pr-4 text-right ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>Unit Price</th>
+                      <th className={`pb-3 text-right ${isClassic ? "p-3" : isElegant ? "py-2.5" : ""}`}>Line Total</th>
+                    </tr>
+                  </thead>
+                  <tbody className={isClassic ? "divide-y divide-slate-200 border-l border-r border-b border-slate-200" : "divide-y divide-slate-100"}>
+                    {(invoice.lineItems || []).map((item, index) => {
+                      const qty = Number(item.quantity) || 0;
+                      const price = Number(item.unitPrice) || 0;
+                      const lineTotal = qty * price;
+
+                      return (
+                        <tr key={item.id || index} className={isClassic && index % 2 === 1 ? "bg-slate-50/50" : ""}>
+                          <td className={`py-4 pr-4 ${isClassic ? "p-3" : ""}`}>
+                            <div className="font-semibold text-slate-800">{item.itemReference}</div>
+                            {item.itemDescription && <div className="text-xs text-slate-400 mt-0.5 whitespace-pre-wrap">{item.itemDescription}</div>}
+                          </td>
+                          <td className={`py-4 pr-4 text-center text-slate-700 ${isClassic ? "p-3" : ""}`}>{qty}</td>
+                          <td className={`py-4 pr-4 text-right text-slate-700 ${isClassic ? "p-3" : ""}`}>{formatCurrency(price)}</td>
+                          <td className={`py-4 text-right font-semibold text-slate-800 ${isClassic ? "p-3" : ""}`}>{formatCurrency(lineTotal)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Calculations and Balances */}
+              <div className={`flex flex-col items-end pt-6 ${
+                isElegant ? "border-t-2 border-double border-slate-300" : "border-t border-slate-100"
+              }`}>
+                <div className="w-full max-w-sm text-sm space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Subtotal:</span>
+                    <span className="font-semibold text-slate-800">{formatCurrency(subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">VAT ({invoice.vatRate}%):</span>
+                    <span className="font-semibold text-slate-800">{formatCurrency(vatAmount)}</span>
+                  </div>
+                  <div className={`flex justify-between border-t pt-3 text-base font-bold ${
+                    isElegant
+                      ? "border-double border-t-4 border-slate-300 text-slate-900"
+                      : isClassic
+                      ? "border-slate-200 text-slate-900"
+                      : "border-slate-100 text-sky-600"
+                  }`}>
+                    <span className={isElegant ? "font-black" : "text-slate-900"}>Total:</span>
+                    <span className={isModern ? "text-sky-600" : "text-slate-900"}>{formatCurrency(invoiceTotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-500">
+                    <span>Collected:</span>
+                    <span>{formatCurrency(Number(invoice.paidAmount) || 0)}</span>
+                  </div>
+                  <div className={`flex justify-between border-t border-dashed pt-2 text-sm font-bold ${
+                    isClassic ? "border-slate-200 text-rose-700 bg-rose-50/50 p-2.5 rounded-xl mt-1" : "border-slate-100 text-rose-600"
+                  }`}>
+                    <span>Balance Due:</span>
+                    <span>{formatCurrency(Number(invoice.remainingAmount) || 0)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
           {/* Payments List Block (always shown, hidden from printing if empty) */}
           {invoice.payments && invoice.payments.length > 0 ? (

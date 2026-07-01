@@ -278,63 +278,77 @@ function InvoiceCreate() {
 
             <div className="mt-4 space-y-4">
               {lineItems.map((item, index) => (
-                <div key={index} className="grid gap-3 rounded-2xl border border-slate-100 p-4 sm:grid-cols-12 sm:items-center">
-                  <div className="sm:col-span-4">
-                    <label className="mb-1.5 block text-xs font-medium text-slate-500">Item / Reference *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Design Consulting"
-                      value={item.itemReference}
-                      onChange={(e) => handleLineItemChange(index, "itemReference", e.target.value)}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
-                    />
-                  </div>
-                  <div className="sm:col-span-3">
-                    <label className="mb-1.5 block text-xs font-medium text-slate-500">Description</label>
-                    <input
-                      type="text"
-                      placeholder="Optional notes"
-                      value={item.itemDescription}
-                      onChange={(e) => handleLineItemChange(index, "itemDescription", e.target.value)}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-xs font-medium text-slate-500">Quantity</label>
-                    <input
-                      type="number"
-                      required
-                      min="0.001"
-                      step="any"
-                      placeholder="1"
-                      value={item.quantity}
-                      onChange={(e) => handleLineItemChange(index, "quantity", e.target.value)}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-xs font-medium text-slate-500">Unit Price</label>
-                    <input
-                      type="number"
-                      required
-                      min="0.01"
-                      step="any"
-                      placeholder="0.00"
-                      value={item.unitPrice}
-                      onChange={(e) => handleLineItemChange(index, "unitPrice", e.target.value)}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white"
-                    />
-                  </div>
-                  <div className="flex justify-end pt-3 sm:col-span-1 sm:pt-6">
+                <div key={index} className="rounded-3xl border border-slate-200 bg-slate-50/30 p-5 space-y-4 shadow-sm animate-in fade-in zoom-in-95 duration-200">
+                  {/* Item Header (Index and Action) */}
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Line Item #{index + 1}</span>
                     <button
                       type="button"
                       disabled={lineItems.length === 1}
                       onClick={() => removeLineItem(index)}
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50 text-rose-600 transition hover:bg-rose-100 disabled:opacity-50"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-rose-50 text-rose-600 transition hover:bg-rose-100 disabled:opacity-50"
+                      title="Delete Line Item"
                     >
                       <FontAwesomeIcon icon={faTrash} className="h-3.5 w-3.5" />
                     </button>
+                  </div>
+
+                  {/* Fields Grid */}
+                  <div className="grid gap-4 sm:grid-cols-12">
+                    {/* Item Name / Reference */}
+                    <div className="sm:col-span-6">
+                      <label className="mb-1.5 block text-xs font-semibold text-slate-500">Item / Reference *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Design Consulting"
+                        value={item.itemReference}
+                        onChange={(e) => handleLineItemChange(index, "itemReference", e.target.value)}
+                        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-500/5"
+                      />
+                    </div>
+
+                    {/* Quantity */}
+                    <div className="sm:col-span-3">
+                      <label className="mb-1.5 block text-xs font-semibold text-slate-500">Quantity</label>
+                      <input
+                        type="number"
+                        required
+                        min="0.001"
+                        step="any"
+                        placeholder="1"
+                        value={item.quantity}
+                        onChange={(e) => handleLineItemChange(index, "quantity", e.target.value)}
+                        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-500/5"
+                      />
+                    </div>
+
+                    {/* Unit Price */}
+                    <div className="sm:col-span-3">
+                      <label className="mb-1.5 block text-xs font-semibold text-slate-500">Unit Price</label>
+                      <input
+                        type="number"
+                        required
+                        min="0.01"
+                        step="any"
+                        placeholder="0.00"
+                        value={item.unitPrice}
+                        onChange={(e) => handleLineItemChange(index, "unitPrice", e.target.value)}
+                        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-500/5"
+                      />
+                    </div>
+
+                    {/* Description Details (Full Width) */}
+                    <div className="sm:col-span-12">
+                      <label className="mb-1.5 block text-xs font-semibold text-slate-500">Description / Details</label>
+                      <textarea
+                        rows={2}
+                        placeholder="Provide detailed notes, task specifications, deliverables description, or client notes..."
+                        value={item.itemDescription}
+                        onChange={(e) => handleLineItemChange(index, "itemDescription", e.target.value)}
+                        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-500/5 resize-y"
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
